@@ -5,14 +5,42 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Sensate WT901BLE Hand Gestures</title>
 <style>
-:root{--bg:#08111f;--card:#101b2e;--card2:#17253d;--text:#eef5ff;--muted:#9eb0c9;--line:#2a3b5b;--blue:#79adff;--green:#5cda91;--red:#ff7373;--amber:#ffd166}*{box-sizing:border-box}body{margin:0;background:linear-gradient(#07101d,#0c1424);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1200px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}h1{margin:0;font-size:30px}.sub{color:var(--muted);margin-top:5px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:16px}.card{background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:15px}.s12{grid-column:span 12}.s8{grid-column:span 8}.s6{grid-column:span 6}.s4{grid-column:span 4}.s3{grid-column:span 3}@media(max-width:820px){.s8,.s6,.s4,.s3{grid-column:span 12}}button{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:700;background:var(--blue);color:#061120;cursor:pointer}button.alt{background:#273a5a;color:var(--text)}button.red{background:var(--red);color:white}button:disabled{opacity:.45}button.on{background:var(--amber);color:#061120}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.status,.pill{border-radius:999px;padding:7px 10px;background:#233451;color:#c8d6ea;font-size:13px}.ok{color:var(--green)}.bad{color:var(--red)}.metric{font-size:30px;font-weight:800}.label,.small{color:var(--muted);font-size:13px}.small{line-height:1.5}.val{font-variant-numeric:tabular-nums}canvas{width:100%;height:200px;background:#091425;border:1px solid #263956;border-radius:12px}table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid #243651;text-align:right}th:first-child,td:first-child{text-align:left}input,select{width:100%;background:#0a1527;border:1px solid #314667;color:var(--text);padding:9px;border-radius:9px}.log{height:190px;overflow:auto;background:#07101d;border-radius:10px;padding:10px;font:12px ui-monospace,Menlo,monospace;white-space:pre-wrap;color:#bdd0ea}.sep{height:1px;background:#263956;margin:12px 0}.diag{display:grid;grid-template-columns:1fr 1fr;gap:8px}.diag div{background:#0b1628;border-radius:9px;padding:9px}.good{color:var(--green)}.warn{color:var(--amber)}a.hub{border-radius:999px;padding:7px 10px;background:#273a5a;color:var(--text);font-size:13px;text-decoration:none;font-weight:700}.counts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}@media(max-width:820px){.counts{grid-template-columns:repeat(2,1fr)}}.counts div{background:#0b1628;border-radius:9px;padding:10px;text-align:center}.counts .metric{font-size:22px}.conf{height:8px;background:#0b1628;border-radius:99px;overflow:hidden;margin-top:8px}.conf>i{display:block;height:100%;width:0;background:var(--green);border-radius:99px}
+:root{--bg:#08111f;--card:#101b2e;--card2:#17253d;--text:#eef5ff;--muted:#9eb0c9;--line:#2a3b5b;--blue:#79adff;--green:#5cda91;--red:#ff7373;--amber:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(#07101d,#0c1424);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:1200px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+h1{margin:0;font-size:30px}.sub{color:var(--muted);margin-top:5px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:16px}
+.card{background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:15px}
+.s12{grid-column:span 12}.s8{grid-column:span 8}.s6{grid-column:span 6}.s4{grid-column:span 4}.s3{grid-column:span 3}
+@media(max-width:820px){.s8,.s6,.s4,.s3{grid-column:span 12}}
+button{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:700;background:var(--blue);color:#061120;cursor:pointer}
+button.alt{background:#273a5a;color:var(--text)}button.red{background:var(--red);color:white}button:disabled{opacity:.45}
+button.on{background:var(--amber);color:#061120}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.status,.pill{border-radius:999px;padding:7px 10px;background:#233451;color:#c8d6ea;font-size:13px}
+.ok{color:var(--green)}.bad{color:var(--red)}.metric{font-size:30px;font-weight:800}
+.label,.small{color:var(--muted);font-size:13px}.small{line-height:1.5}
+.val{font-variant-numeric:tabular-nums}
+canvas{width:100%;height:200px;background:#091425;border:1px solid #263956;border-radius:12px}
+table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid #243651;text-align:right}th:first-child,td:first-child{text-align:left}
+input,select{width:100%;background:#0a1527;border:1px solid #314667;color:var(--text);padding:9px;border-radius:9px}
+.log{height:190px;overflow:auto;background:#07101d;border-radius:10px;padding:10px;font:12px ui-monospace,Menlo,monospace;white-space:pre-wrap;color:#bdd0ea}
+.sep{height:1px;background:#263956;margin:12px 0}
+.diag{display:grid;grid-template-columns:1fr 1fr;gap:8px}.diag div{background:#0b1628;border-radius:9px;padding:9px}
+.good{color:var(--green)}.warn{color:var(--amber)}
+a.hub{border-radius:999px;padding:7px 10px;background:#273a5a;color:var(--text);font-size:13px;text-decoration:none;font-weight:700}
+.counts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}@media(max-width:820px){.counts{grid-template-columns:repeat(2,1fr)}}
+.counts div{background:#0b1628;border-radius:9px;padding:10px;text-align:center}.counts .metric{font-size:22px}
+.conf{height:8px;background:#0b1628;border-radius:99px;overflow:hidden;margin-top:8px}.conf>i{display:block;height:100%;width:0;background:var(--green);border-radius:99px}
+.ex{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}.ex span{background:#0b1628;border-radius:9px;padding:8px 10px;font-size:13px}
+.ex b{color:var(--text)}
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="top"><div><h1>Sensate • WT901BLE Hand Gestures</h1><div class="sub">Web Bluetooth • live IMU • gesture record + detect • diagnostics • CSV export</div></div><div class="row"><a class="hub" href="index.html">Sensate</a><div class="pill">Chrome/Edge desktop recommended</div></div></div>
+<div class="top"><div><h1>Sensate • WT901BLE Hand Gestures</h1><div class="sub">Web Bluetooth • live IMU • labeled training • in-browser learner • CSV</div></div><div class="row"><a class="hub" href="index.html">Sensate</a><div class="pill">Chrome/Edge desktop recommended</div></div></div>
 <div class="grid">
-<section class="card s12"><div class="row"><button id="connect">Connect WT901BLE</button><button id="disconnect" class="alt" disabled>Disconnect</button><button id="start" class="alt" disabled>Start Session</button><button id="stop" class="red" disabled>Stop</button><button id="simulate" class="alt">Simulate Gestures</button><button id="export" class="alt" disabled>Export CSV</button><span id="status" class="status">Not connected</span><span id="rate" class="pill">0 Hz</span></div><div class="small" style="margin-top:10px">Suggested placement: firmly on the back of the hand or wrist. Keep sensor orientation fixed during a take.</div></section>
+<section class="card s12"><div class="row"><button id="connect">Connect WT901BLE</button><button id="disconnect" class="alt" disabled>Disconnect</button><button id="start" class="alt" disabled>Start Session</button><button id="stop" class="red" disabled>Stop</button><button id="simulate" class="alt">Simulate Gestures</button><button id="export" class="alt" disabled>Export CSV</button><span id="status" class="status">Not connected</span><span id="rate" class="pill">0 Hz</span><span id="srcPill" class="pill">rules</span></div><div class="small" style="margin-top:10px">Suggested placement: firmly on the back of the hand or wrist. Keep sensor orientation fixed during a take. To train: select a label, Start Session, repeat that gesture, Stop, then Train model.</div></section>
 
 <section class="card s3"><div id="curG" class="metric val">Rest</div><div class="label">Current gesture</div></section>
 <section class="card s3"><div id="confTxt" class="metric val">—</div><div class="label">Confidence</div><div class="conf"><i id="confBar"></i></div></section>
@@ -42,7 +70,7 @@
 </section>
 
 <section class="card s4"><strong>Manual labels</strong><div class="sep"></div>
-<div class="small">Stamp <code>gesture_label</code> on incoming samples while selected.</div><br>
+<div class="small">While selected, samples are labeled and harvested as ~500 ms training windows.</div><br>
 <div class="row">
 <button class="alt lab" data-lab="Rest">Rest</button>
 <button class="alt lab" data-lab="Wave">Wave</button>
@@ -53,6 +81,19 @@
 </div><br>
 <div class="small">Custom label</div>
 <input id="customLab" placeholder="e.g. snap">
+</section>
+
+<section class="card s4"><strong>Learner</strong><div class="sep"></div>
+<div class="small" id="learnStatus">No model. Collect labeled windows, then Train.</div>
+<div class="ex" id="exCounts"></div>
+<div class="row">
+<button id="train">Train model</button>
+<button id="useLearn" class="alt">Use learner</button>
+<button id="importCsv" class="alt">Import CSV</button>
+<button id="clearLearn" class="red">Clear examples</button>
+</div>
+<input id="csvFile" type="file" accept=".csv,text/csv" style="display:none">
+<div class="small" style="margin-top:10px">Stores examples and weights in this browser. Rules stay as fallback when confidence is low. Simulate Gestures auto-labels, so you can train without hardware.</div>
 </section>
 
 <section class="card s4"><strong>Session summary</strong>
@@ -93,12 +134,17 @@
 <script>
 (()=>{'use strict';
 const S='0000ffe5-0000-1000-8000-00805f9a34fb',N='0000ffe4-0000-1000-8000-00805f9a34fb',W='0000ffe9-0000-1000-8000-00805f9a34fb';
-const NAMES=['Rest','Wave','Flick','Punch','Twist'];
+const BASE=['Rest','Wave','Flick','Punch','Twist'];
+const STORE='sensate-gesture-learner-v1';
+const WIN_MS=500, HOP_MS=100, MAX_PER=200;
 const $=id=>document.getElementById(id);
+let NAMES=BASE.slice();
 let dev,server,notify,writer,rx=[],recording=false,startAt=0,samples=[],packets=0,rateCount=0,rateAt=performance.now(),simTimer=null;
 let plotA=[],plotG=[],hist=[],smA=[],smG=[];
-let current='Rest',confidence=0,lastEventT=-1e9,lastCounted='',waveActive=false,restHold=-1,activeLabel='';
+let current='Rest',confidence=0,lastEventT=-1e9,lastCounted='',restHold=-1,activeLabel='',simKind='';
 let counts={Rest:0,Wave:0,Flick:0,Punch:0,Twist:0};
+let examples=[], model=null, useLearner=false, lastHarvest=-1e9, waveLock=false;
+
 function log(s){let e=$('log');e.textContent+=new Date().toLocaleTimeString()+'  '+s+'\n';e.scrollTop=e.scrollHeight}
 function evlog(s){let e=$('events');e.textContent+=new Date().toLocaleTimeString()+'  '+s+'\n';e.scrollTop=e.scrollHeight}
 function status(s,c=''){let e=$('status');e.textContent=s;e.className='status '+c}
@@ -107,6 +153,8 @@ function angDiff(a,b){let d=b-a;while(d>180)d-=360;while(d<-180)d+=360;return d}
 function mean(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:0}
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
 function zc(arr){let n=0;for(let i=1;i<arr.length;i++){if(arr[i-1]===0||arr[i]===0)continue;if((arr[i-1]<0)!==(arr[i]<0))n++}return n}
+function stdev(a){if(a.length<2)return 0;let m=mean(a);return Math.sqrt(mean(a.map(x=>(x-m)**2)))}
+function rms(a){return a.length?Math.sqrt(mean(a.map(x=>x*x))):0}
 
 function packet(p){if(p.length!==20||p[0]!==0x55||p[1]!==0x61)return;let x={ax:s16(p[2],p[3])/32768*16,ay:s16(p[4],p[5])/32768*16,az:s16(p[6],p[7])/32768*16,gx:s16(p[8],p[9])/32768*2000,gy:s16(p[10],p[11])/32768*2000,gz:s16(p[12],p[13])/32768*2000,roll:s16(p[14],p[15])/32768*180,pitch:s16(p[16],p[17])/32768*180,yaw:s16(p[18],p[19])/32768*180,t:performance.now()};packets++;rateCount++;$('dPackets').textContent=packets;sample(x)}
 function incoming(bytes){for(let b of bytes)rx.push(b);while(rx.length>=2){while(rx.length&&rx[0]!==0x55)rx.shift();if(rx.length<2)return;if(rx[1]===0x61){if(rx.length<20)return;packet(rx.splice(0,20))}else rx.shift()}}
@@ -116,86 +164,246 @@ async function connect(){if(!navigator.bluetooth){status('Web Bluetooth unavaila
 function disconnected(){recording=false;$('connect').disabled=false;$('disconnect').disabled=true;$('start').disabled=true;$('stop').disabled=true;$('dGatt').textContent='Disconnected';status('Disconnected');log('Disconnected')}
 function disconnect(){try{dev?.gatt?.disconnect()}catch(e){}disconnected()}
 
-function labelValue(){if(!activeLabel)return '';if(activeLabel==='Custom')return ($('customLab').value.trim()||'Custom');return activeLabel}
+function labelValue(){
+  if(simKind) return simKind;
+  if(!activeLabel) return '';
+  if(activeLabel==='Custom') return ($('customLab').value.trim()||'Custom');
+  return activeLabel;
+}
+function ensureClass(name){
+  if(!name) return;
+  if(!NAMES.includes(name)) NAMES.push(name);
+  if(!(name in counts)) counts[name]=0;
+}
 
-function detect(x){
-  const punchTh=+$('punchTh').value,flickTh=+$('flickTh').value,restA=+$('restA').value,restG=+$('restG').value,twistDeg=+$('twistDeg').value,minInt=+$('minInt').value,n=+$('smooth').value;
-  hist.push(x);while(hist.length&&x.t-hist[0].t>2000)hist.shift();
+function feats(win){
+  if(win.length<8) return null;
+  const keys=['ax','ay','az','gx','gy','gz'];
+  const out=[];
+  for(const k of keys){
+    const a=win.map(s=>s[k]);
+    out.push(mean(a), stdev(a), rms(a), Math.max(...a.map(Math.abs)));
+  }
+  const am=win.map(s=>s.amag), gm=win.map(s=>s.gmag);
+  out.push(mean(am), Math.max(...am), mean(gm), Math.max(...gm));
+  out.push(Math.abs(angDiff(win[0].yaw, win.at(-1).yaw)));
+  out.push(Math.abs(angDiff(win[0].roll, win.at(-1).roll)));
+  out.push(Math.abs(angDiff(win[0].pitch, win.at(-1).pitch)));
+  out.push(zc(win.map(s=>s.gx)), zc(win.map(s=>s.gy)), zc(win.map(s=>s.gz)));
+  out.push(win.at(-1).t-win[0].t);
+  return out;
+}
+function windowNow(now){return hist.filter(s=>now-s.t<=WIN_MS)}
+function classCounts(){
+  const c={}; for(const e of examples) c[e.y]=(c[e.y]||0)+1; return c;
+}
+function renderExamples(){
+  const c=classCounts();
+  const keys=Object.keys(c);
+  $('exCounts').innerHTML=keys.length?keys.map(k=>`<span><b>${c[k]}</b> ${k}</span>`).join(''):'<span>0 windows</span>';
+}
+function persist(){
+  try{localStorage.setItem(STORE, JSON.stringify({examples, model, NAMES, useLearner}))}catch(e){log('Could not save learner: '+e.message)}
+}
+function restore(){
+  try{
+    const raw=localStorage.getItem(STORE); if(!raw) return;
+    const o=JSON.parse(raw);
+    examples=Array.isArray(o.examples)?o.examples:[];
+    model=o.model||null;
+    if(Array.isArray(o.NAMES) && o.NAMES.length) NAMES=o.NAMES;
+    useLearner=!!o.useLearner && !!model;
+  }catch(e){}
+}
+function zscore(v, mu, sig){return v.map((x,i)=>x/((sig[i]||1e-6)))}
+
+function harvest(now){
+  const lab=labelValue();
+  if(!recording || !lab) return;
+  if(now-lastHarvest<HOP_MS) return;
+  const w=windowNow(now); if(w.length<8) return;
+  const f=feats(w); if(!f) return;
+  ensureClass(lab);
+  const n=(classCounts()[lab]||0);
+  if(n>=MAX_PER) return;
+  lastHarvest=now;
+  examples.push({y:lab, x:f});
+  renderExamples();
+}
+
+function softmax(z){
+  const m=Math.max(...z), e=z.map(v=>Math.exp(v-m)), s=e.reduce((a,b)=>a+b,0);
+  return e.map(v=>v/s);
+}
+function trainSoftmax(rows, classes){
+  const n=rows.length, d=rows[0].x.length, c=classes.length;
+  const mu=Array(d).fill(0), sig=Array(d).fill(0);
+  for(const r of rows) for(let i=0;i<d;i++) mu[i]+=r.x[i];
+  for(let i=0;i<d;i++) mu[i]/=n;
+  for(const r of rows) for(let i=0;i<d;i++) sig[i]+=(r.x[i]-mu[i])**2;
+  for(let i=0;i<d;i++) sig[i]=Math.sqrt(sig[i]/n)||1e-6;
+  const X=rows.map(r=>r.x.map((v,i)=>(v-mu[i])/sig[i]));
+  const Y=rows.map(r=>classes.indexOf(r.y));
+  let W=Array.from({length:c},()=>Array(d).fill(0));
+  let b=Array(c).fill(0);
+  const lr=0.35, epochs=Math.min(400, 80+n*4);
+  for(let ep=0; ep<epochs; ep++){
+    const gW=Array.from({length:c},()=>Array(d).fill(0)), gb=Array(c).fill(0);
+    for(let i=0;i<n;i++){
+      const z=W.map((w,k)=> b[k]+w.reduce((s,wv,j)=>s+wv*X[i][j],0));
+      const p=softmax(z);
+      for(let k=0;k<c;k++){
+        const err=p[k]-(k===Y[i]?1:0);
+        gb[k]+=err;
+        for(let j=0;j<d;j++) gW[k][j]+=err*X[i][j];
+      }
+    }
+    for(let k=0;k<c;k++){
+      b[k]-=lr*gb[k]/n;
+      for(let j=0;j<d;j++) W[k][j]-=lr*(gW[k][j]/n + 0.002*W[k][j]);
+    }
+  }
+  let hit=0;
+  for(let i=0;i<n;i++){
+    const z=W.map((w,k)=> b[k]+w.reduce((s,wv,j)=>s+wv*X[i][j],0));
+    if(softmax(z).indexOf(Math.max(...softmax(z)))===Y[i]) hit++;
+  }
+  return {type:'softmax', classes, mu, sig, W, b, acc:hit/n, n};
+}
+function predictModel(f){
+  if(!model || !f) return null;
+  const x=f.map((v,i)=>(v-model.mu[i])/((model.sig[i]||1e-6)));
+  const z=model.W.map((w,k)=> model.b[k]+w.reduce((s,wv,j)=>s+wv*x[j],0));
+  const p=softmax(z);
+  let best=0; for(let i=1;i<p.length;i++) if(p[i]>p[best]) best=i;
+  return {label:model.classes[best], score:p[best], source:'learner'};
+}
+function knnPredict(f){
+  if(examples.length<2 || !f) return null;
+  const cc=classCounts();
+  const classes=Object.keys(cc);
+  const mu=[], sig=[];
+  const d=f.length;
+  for(let i=0;i<d;i++){
+    const col=examples.map(e=>e.x[i]); mu.push(mean(col)); sig.push(stdev(col)||1e-6);
+  }
+  const q=f.map((v,i)=>(v-mu[i])/sig[i]);
+  const dist=examples.map(e=>{
+    const x=e.x.map((v,i)=>(v-mu[i])/sig[i]);
+    let s=0; for(let i=0;i<d;i++) s+=(x[i]-q[i])**2;
+    return {y:e.y, d:Math.sqrt(s)};
+  }).sort((a,b)=>a.d-b.d);
+  const k=Math.min(5, dist.length);
+  const votes={};
+  for(let i=0;i<k;i++) votes[dist[i].y]=(votes[dist[i].y]||0)+1/(1+dist[i].d);
+  let lab=classes[0], best=-1;
+  for(const [y,v] of Object.entries(votes)) if(v>best){best=v; lab=y}
+  const score=clamp(best / (votes[lab] ? k : 1), 0, 1);
+  return {label:lab, score:clamp(1/(1+dist[0].d), 0.05, 0.99), source:'learner'};
+}
+
+function trainModel(){
+  const cc=classCounts();
+  const classes=Object.keys(cc);
+  if(classes.length<2){log('Need labeled windows from at least 2 gestures.'); $('learnStatus').textContent='Need ≥2 classes.'; return}
+  if(examples.length<6){log('Need more labeled windows (try ~3+ repeats per gesture).'); $('learnStatus').textContent='Need more windows.'; return}
+  const minC=Math.min(...classes.map(k=>cc[k]));
+  if(minC<2){log('Each class needs at least 2 windows.'); $('learnStatus').textContent='A class has <2 windows.'; return}
+  model=trainSoftmax(examples, classes);
+  useLearner=true;
+  $('useLearn').classList.add('on');
+  persist();
+  $('learnStatus').textContent=`Trained softmax on ${model.n} windows, ${classes.length} classes. Train acc ${(model.acc*100).toFixed(0)}%.`;
+  log('Learner trained: '+classes.map(k=>k+' '+cc[k]).join(', ')+'  acc '+(model.acc*100).toFixed(0)+'%');
+  renderLearnUI();
+}
+
+function detectRules(x){
+  const punchTh=+$('punchTh').value,flickTh=+$('flickTh').value,restA=+$('restA').value,restG=+$('restG').value,twistDeg=+$('twistDeg').value,n=+$('smooth').value;
   smA.push(x.amag);smG.push(x.gmag);if(smA.length>n)smA.shift();if(smG.length>n)smG.shift();
-  const a=mean(smA),g=mean(smG),now=x.t,cool=(now-lastEventT)<minInt;
+  const a=mean(smA),g=mean(smG),now=x.t;
   const quiet=Math.abs(a-1)<restA && g<restG;
-
   let guess='Rest',score=0;
   if(a>punchTh){
     guess='Punch';score=clamp((a-1)/Math.max(0.4,punchTh-1),0,1);
   }else{
     const win=hist.filter(s=>now-s.t<=1500);
-    const gy=win.map(s=>s.gy),gx=win.map(s=>s.gx),gz=win.map(s=>s.gz);
-    const zBest=Math.max(zc(gy),zc(gx),zc(gz));
+    const zBest=Math.max(zc(win.map(s=>s.gy)),zc(win.map(s=>s.gx)),zc(win.map(s=>s.gz)));
     const span=win.length?win.at(-1).t-win[0].t:0;
     const gMean=mean(win.map(s=>s.gmag));
     const waveLike=zBest>=3 && span>=400 && span<=2000 && gMean>55 && gMean<flickTh*0.95 && a<punchTh*0.85;
-
     const tw=hist.filter(s=>now-s.t<=350);
     let dAng=0;
-    if(tw.length>4){
-      dAng=Math.max(Math.abs(angDiff(tw[0].yaw,tw.at(-1).yaw)),Math.abs(angDiff(tw[0].roll,tw.at(-1).roll)));
-    }
+    if(tw.length>4) dAng=Math.max(Math.abs(angDiff(tw[0].yaw,tw.at(-1).yaw)),Math.abs(angDiff(tw[0].roll,tw.at(-1).roll)));
     const twistLike=dAng>twistDeg && gMean>50 && gMean<flickTh*0.9 && a<punchTh;
-
-    if(waveLike){guess='Wave';score=clamp(zBest/6,0,1);waveActive=true}
-    else{
-      waveActive=false;
-      if(g>flickTh && a<punchTh*0.85){guess='Flick';score=clamp(g/flickTh,0,1)}
-      else if(twistLike){guess='Twist';score=clamp(dAng/Math.max(twistDeg,1),0,1)}
-      else if(quiet){guess='Rest';score=clamp(1-Math.max(Math.abs(a-1)/Math.max(restA,.01),g/Math.max(restG,.01)),0,1)}
-      else{guess=current;score=Math.max(0.15,confidence*0.85)}
-    }
+    if(waveLike){guess='Wave';score=clamp(zBest/6,0,1)}
+    else if(g>flickTh && a<punchTh*0.85){guess='Flick';score=clamp(g/flickTh,0,1)}
+    else if(twistLike){guess='Twist';score=clamp(dAng/Math.max(twistDeg,1),0,1)}
+    else if(quiet){guess='Rest';score=clamp(1-Math.max(Math.abs(a-1)/Math.max(restA,.01),g/Math.max(restG,.01)),0,1)}
+    else {guess=current;score=Math.max(0.15,confidence*0.85)}
   }
+  return {guess, score, quiet, now};
+}
 
-  current=guess;confidence=score;
+function detect(x){
+  hist.push(x); while(hist.length && x.t-hist[0].t>2000) hist.shift();
+  harvest(x.t);
+  const rules=detectRules(x);
+  let guess=rules.guess, score=rules.score, source='rules';
+  if(useLearner && (model || examples.length>=6)){
+    const f=feats(windowNow(x.t));
+    const pred=model?predictModel(f):knnPredict(f);
+    if(pred && pred.score>=0.42){guess=pred.label; score=pred.score; source='learner'}
+  }
+  current=guess; confidence=score;
   $('curG').textContent=current;
   $('confTxt').textContent=isFinite(score)?Math.round(score*100)+'%':'—';
   $('confBar').style.width=Math.round(clamp(score,0,1)*100)+'%';
-
-  if(!recording)return guess;
-
+  $('srcPill').textContent=source;
+  const minInt=+$('minInt').value, now=x.t, cool=(now-lastEventT)<minInt;
+  if(!recording) return guess;
   if(guess==='Rest'){
-    if(quiet){if(restHold<0)restHold=now;if(now-restHold>=250 && lastCounted!=='Rest'){emit('Rest',score,now)}}
+    if(rules.quiet){if(restHold<0)restHold=now; if(now-restHold>=250 && lastCounted!=='Rest') emit('Rest',score,now,source)}
     else restHold=-1;
   }else{
     restHold=-1;
-    if(guess!==lastCounted && !cool) emit(guess,score,now);
-    else if(guess==='Wave' && !waveLock && !cool) emit('Wave',score,now);
+    if(guess!==lastCounted && !cool) emit(guess,score,now,source);
+    else if(guess==='Wave' && !waveLock && !cool) emit('Wave',score,now,source);
   }
   return guess;
 }
-let waveLock=false;
-function emit(name,score,t){
-  if(!NAMES.includes(name))return;
+function emit(name,score,t,source){
+  ensureClass(name);
   if(name==='Wave'){if(waveLock)return;waveLock=true}
-  lastEventT=t;lastCounted=name;counts[name]++; 
-  evlog(name+'  conf '+(score*100).toFixed(0)+'%');
+  lastEventT=t; lastCounted=name; counts[name]=(counts[name]||0)+1;
+  evlog(name+'  '+(score*100).toFixed(0)+'%  '+source);
   renderCounts();
 }
-function maybeUnlockWave(){if(current!=='Wave')waveLock=false}
+function maybeUnlockWave(){if(current!=='Wave') waveLock=false}
 
 function renderCounts(){
-  $('cRest').textContent=counts.Rest;$('cWave').textContent=counts.Wave;$('cFlick').textContent=counts.Flick;$('cPunch').textContent=counts.Punch;$('cTwist').textContent=counts.Twist;
-  const n=counts.Wave+counts.Flick+counts.Punch+counts.Twist+counts.Rest;
+  for(const k of BASE){const el=$('c'+k); if(el) el.textContent=counts[k]||0}
+  const n=Object.values(counts).reduce((a,b)=>a+b,0);
   $('nEvents').textContent=n;
-  $('sumRWF').textContent=counts.Rest+' / '+counts.Wave+' / '+counts.Flick;
-  $('sumPT').textContent=counts.Punch+' / '+counts.Twist;
+  $('sumRWF').textContent=(counts.Rest||0)+' / '+(counts.Wave||0)+' / '+(counts.Flick||0);
+  $('sumPT').textContent=(counts.Punch||0)+' / '+(counts.Twist||0);
+}
+function renderLearnUI(){
+  renderExamples();
+  $('useLearn').classList.toggle('on', useLearner);
+  if(model) $('learnStatus').textContent=`Model ready • ${model.n} windows • ${model.classes.length} classes • train acc ${(model.acc*100).toFixed(0)}%`;
+  else if(examples.length) $('learnStatus').textContent=`${examples.length} windows stored. Train to fit softmax.`;
+  else $('learnStatus').textContent='No model. Collect labeled windows, then Train.';
 }
 
 function sample(x){
-  x.amag=Math.hypot(x.ax,x.ay,x.az);x.gmag=Math.hypot(x.gx,x.gy,x.gz);
-  for(let k of ['ax','ay','az'])$(k).textContent=x[k].toFixed(3);
-  for(let k of ['gx','gy','gz','roll','pitch','yaw'])$(k).textContent=x[k].toFixed(1);
-  $('amag').textContent=x.amag.toFixed(3);$('gmag').textContent=x.gmag.toFixed(1);
-  plotA.push(x.amag);plotG.push(x.gmag);if(plotA.length>350)plotA.shift();if(plotG.length>350)plotG.shift();
-  const det=detect(x);maybeUnlockWave();
-  if(!recording)return;
+  x.amag=Math.hypot(x.ax,x.ay,x.az); x.gmag=Math.hypot(x.gx,x.gy,x.gz);
+  for(let k of ['ax','ay','az']) $(k).textContent=x[k].toFixed(3);
+  for(let k of ['gx','gy','gz','roll','pitch','yaw']) $(k).textContent=x[k].toFixed(1);
+  $('amag').textContent=x.amag.toFixed(3); $('gmag').textContent=x.gmag.toFixed(1);
+  plotA.push(x.amag); plotG.push(x.gmag); if(plotA.length>350) plotA.shift(); if(plotG.length>350) plotG.shift();
+  const det=detect(x); maybeUnlockWave();
+  if(!recording) return;
   const rel=(x.t-startAt)/1000;
   samples.push({rel,ax:x.ax,ay:x.ay,az:x.az,gx:x.gx,gy:x.gy,gz:x.gz,roll:x.roll,pitch:x.pitch,yaw:x.yaw,amag:x.amag,gmag:x.gmag,label:labelValue(),detected:det});
   $('nSamples').textContent=samples.length;
@@ -211,100 +419,150 @@ function metrics(){
   }
   renderCounts();
 }
-
 function resetDetector(){
-  hist=[];smA=[];smG=[];current='Rest';confidence=0;lastEventT=-1e9;lastCounted='';waveActive=false;waveLock=false;restHold=-1;
-  counts={Rest:0,Wave:0,Flick:0,Punch:0,Twist:0};$('events').textContent='';
-  $('curG').textContent='Rest';$('confTxt').textContent='—';$('confBar').style.width='0';
+  hist=[]; smA=[]; smG=[]; current='Rest'; confidence=0; lastEventT=-1e9; lastCounted=''; waveLock=false; restHold=-1;
+  counts={Rest:0,Wave:0,Flick:0,Punch:0,Twist:0}; $('events').textContent='';
+  $('curG').textContent='Rest'; $('confTxt').textContent='—'; $('confBar').style.width='0';
   renderCounts();
 }
-
 function begin(){
-  samples=[];resetDetector();recording=true;startAt=performance.now();
-  $('start').disabled=true;$('stop').disabled=false;$('export').disabled=true;
-  $('nSamples').textContent='0';$('peakA').textContent='—';$('peakG').textContent='—';
+  samples=[]; resetDetector(); recording=true; startAt=performance.now();
+  $('start').disabled=true; $('stop').disabled=false; $('export').disabled=true;
+  $('nSamples').textContent='0'; $('peakA').textContent='—'; $('peakG').textContent='—';
   log('Session started');
 }
 function end(){
-  recording=false;$('start').disabled=!server?.connected;$('stop').disabled=true;$('export').disabled=!samples.length;
-  log('Session stopped: '+samples.length+' samples, events Rest/Wave/Flick/Punch/Twist = '+[counts.Rest,counts.Wave,counts.Flick,counts.Punch,counts.Twist].join('/'));
-  metrics();
+  recording=false; simKind=''; $('start').disabled=!server?.connected; $('stop').disabled=true; $('export').disabled=!samples.length;
+  persist();
+  log('Session stopped: '+samples.length+' samples. Training windows: '+examples.length);
+  metrics(); renderLearnUI();
 }
 
-const SEQ=[
-  ['Rest',1000],['Wave',1200],['Rest',400],['Flick',280],['Rest',500],
-  ['Punch',280],['Rest',500],['Twist',600],['Rest',700]
-];
+const SEQ=[['Rest',1000],['Wave',1200],['Rest',400],['Flick',280],['Rest',500],['Punch',280],['Rest',500],['Twist',600],['Rest',700]];
 const CYCLE=SEQ.reduce((s,x)=>s+x[1],0);
 function synth(kind,ph,tAbs){
   const n=()=>Math.random()-.5;
   let ax=.02*n(),ay=.02*n(),az=1+.02*n(),gx=6*n(),gy=6*n(),gz=6*n(),roll=1*n(),pitch=1*n(),yaw=0;
   if(kind==='Wave'){
     const w=2*Math.PI*2.5*tAbs;
-    gy=170*Math.sin(w);gx=35*Math.sin(w+.6);gz=20*Math.sin(w+.3);
-    ax=.28*Math.sin(w);ay=.18*Math.cos(w);az=1+.12*Math.sin(w);
-    roll=22*Math.sin(w);pitch=8*Math.sin(w+.4);
+    gy=170*Math.sin(w); gx=35*Math.sin(w+.6); gz=20*Math.sin(w+.3);
+    ax=.28*Math.sin(w); ay=.18*Math.cos(w); az=1+.12*Math.sin(w);
+    roll=22*Math.sin(w); pitch=8*Math.sin(w+.4);
   }else if(kind==='Flick'){
     const env=Math.exp(-Math.pow((ph-.42)*7,2));
-    gz=420*env;gy=70*env;gx=30*env;ax=.35*env;az=1+.18*env;
+    gz=420*env; gy=70*env; gx=30*env; ax=.35*env; az=1+.18*env;
   }else if(kind==='Punch'){
     const env=Math.exp(-Math.pow((ph-.38)*8,2));
-    ax=2.55*env;ay=.25*env;az=1+.9*env;gx=90*env;gy=40*env;
+    ax=2.55*env; ay=.25*env; az=1+.9*env; gx=90*env; gy=40*env;
   }else if(kind==='Twist'){
-    yaw=72*ph;roll=18*ph;gz=95;gy=28;gx=12;az=1.04;ax=.08;
+    yaw=72*ph; roll=18*ph; gz=95; gy=28; gx=12; az=1.04; ax=.08;
   }
   return {ax,ay,az,gx,gy,gz,roll,pitch,yaw,t:performance.now()};
 }
 function simulate(){
-  if(simTimer){clearInterval(simTimer);simTimer=null;$('simulate').textContent='Simulate Gestures';log('Simulation stopped');return}
-  if(!recording)begin();
+  if(simTimer){clearInterval(simTimer); simTimer=null; simKind=''; $('simulate').textContent='Simulate Gestures'; log('Simulation stopped'); return}
+  if(!recording) begin();
   const t0=performance.now();
   simTimer=setInterval(()=>{
     const t=performance.now()-t0, m=t%CYCLE;
-    let acc=0,kind='Rest',local=0,dur=1;
-    for(const [k,ms] of SEQ){if(m<acc+ms){kind=k;local=(m-acc)/ms;dur=ms;break}acc+=ms}
-    sample(synth(kind,local,(performance.now()-t0)/1000));rateCount++;
+    let acc=0, kind='Rest', local=0;
+    for(const [k,ms] of SEQ){if(m<acc+ms){kind=k; local=(m-acc)/ms; break} acc+=ms}
+    simKind=kind;
+    sample(synth(kind,local,(performance.now()-t0)/1000)); rateCount++;
   },20);
-  $('simulate').textContent='Stop Simulation';log('Simulated gestures started (Rest → Wave → Flick → Punch → Twist)');
+  $('simulate').textContent='Stop Simulation';
+  log('Simulated gestures started (auto-labeled for training)');
 }
 
 function csv(){
   const h='time_s,ax_g,ay_g,az_g,gx_dps,gy_dps,gz_dps,roll_deg,pitch_deg,yaw_deg,accel_mag_g,gyro_mag_dps,gesture_label,detected_gesture\n';
   const b=h+samples.map(s=>[s.rel,s.ax,s.ay,s.az,s.gx,s.gy,s.gz,s.roll,s.pitch,s.yaw,s.amag,s.gmag,s.label,s.detected].join(',')).join('\n');
   const u=URL.createObjectURL(new Blob([b],{type:'text/csv'})),a=document.createElement('a');
-  a.href=u;a.download='sensate-gestures-'+new Date().toISOString().replace(/[:.]/g,'-')+'.csv';a.click();URL.revokeObjectURL(u);
+  a.href=u; a.download='sensate-gestures-'+new Date().toISOString().replace(/[:.]/g,'-')+'.csv'; a.click(); URL.revokeObjectURL(u);
+}
+function importCsvText(text){
+  const lines=text.trim().split(/\r?\n/); if(lines.length<3){log('CSV too short'); return}
+  const head=lines[0].split(',').map(s=>s.trim());
+  const idx=Object.fromEntries(head.map((h,i)=>[h,i]));
+  const need=['time_s','ax_g','ay_g','az_g','gx_dps','gy_dps','gz_dps','roll_deg','pitch_deg','yaw_deg','gesture_label'];
+  if(need.some(k=>idx[k]==null)){log('CSV missing expected columns'); return}
+  const rows=[];
+  for(let i=1;i<lines.length;i++){
+    const p=lines[i].split(','); if(p.length<head.length) continue;
+    const lab=(p[idx.gesture_label]||'').trim(); if(!lab) continue;
+    const t=parseFloat(p[idx.time_s])*1000;
+    rows.push({
+      t, ax:+p[idx.ax_g], ay:+p[idx.ay_g], az:+p[idx.az_g],
+      gx:+p[idx.gx_dps], gy:+p[idx.gy_dps], gz:+p[idx.gz_dps],
+      roll:+p[idx.roll_deg], pitch:+p[idx.pitch_deg], yaw:+p[idx.yaw_deg],
+      amag:Math.hypot(+p[idx.ax_g],+p[idx.ay_g],+p[idx.az_g]),
+      gmag:Math.hypot(+p[idx.gx_dps],+p[idx.gy_dps],+p[idx.gz_dps]),
+      lab
+    });
+  }
+  let added=0;
+  for(let i=0;i<rows.length;i++){
+    const now=rows[i].t, lab=rows[i].lab;
+    const win=rows.filter(s=>now-s.t>=0 && now-s.t<=WIN_MS && s.lab===lab);
+    if(win.length<8) continue;
+    if(i%5) continue;
+    const f=feats(win); if(!f) continue;
+    ensureClass(lab);
+    if((classCounts()[lab]||0)>=MAX_PER) continue;
+    examples.push({y:lab, x:f}); added++;
+  }
+  persist(); renderLearnUI();
+  log('Imported '+added+' training windows from CSV');
 }
 
 function drawOne(id,data,color,pad){
   const c=$(id),ctx=c.getContext('2d'),w=c.width,h=c.height;
-  ctx.fillStyle='#091425';ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='#091425'; ctx.fillRect(0,0,w,h);
   ctx.strokeStyle='#263956';
-  for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(0,i*h/4);ctx.lineTo(w,i*h/4);ctx.stroke()}
+  for(let i=1;i<4;i++){ctx.beginPath(); ctx.moveTo(0,i*h/4); ctx.lineTo(w,i*h/4); ctx.stroke()}
   if(data.length>2){
-    let lo=Math.min(...data),hi=Math.max(...data);if(hi-lo<pad){lo-=pad/2;hi+=pad/2}
-    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
-    data.forEach((v,i)=>{const x=i/(data.length-1)*w,y=h-(v-lo)/(hi-lo)*h;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+    let lo=Math.min(...data), hi=Math.max(...data); if(hi-lo<pad){lo-=pad/2; hi+=pad/2}
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.beginPath();
+    data.forEach((v,i)=>{const x=i/(data.length-1)*w, y=h-(v-lo)/(hi-lo)*h; i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
     ctx.stroke();
   }
 }
-function draw(){drawOne('chartA',plotA,'#79adff',.2);drawOne('chartG',plotG,'#5cda91',20);requestAnimationFrame(draw)}
+function draw(){drawOne('chartA',plotA,'#79adff',.2); drawOne('chartG',plotG,'#5cda91',20); requestAnimationFrame(draw)}
 
 document.querySelectorAll('.lab').forEach(btn=>{
   btn.onclick=()=>{
     const lab=btn.dataset.lab;
-    if(activeLabel===lab){activeLabel='';btn.classList.remove('on')}
-    else{activeLabel=lab;document.querySelectorAll('.lab').forEach(b=>b.classList.remove('on'));btn.classList.add('on')}
+    if(activeLabel===lab){activeLabel=''; btn.classList.remove('on')}
+    else{activeLabel=lab; document.querySelectorAll('.lab').forEach(b=>b.classList.remove('on')); btn.classList.add('on')}
     log(activeLabel?('Label: '+labelValue()):'Label cleared');
   };
 });
+$('train').onclick=trainModel;
+$('useLearn').onclick=()=>{
+  if(!model && examples.length<6){log('Train a model first'); return}
+  useLearner=!useLearner; persist(); renderLearnUI();
+  log(useLearner?'Learner on':'Learner off (rules only)');
+};
+$('clearLearn').onclick=()=>{
+  examples=[]; model=null; useLearner=false; persist(); renderLearnUI();
+  log('Cleared learner examples and weights');
+};
+$('importCsv').onclick=()=>$('csvFile').click();
+$('csvFile').onchange=e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=()=>importCsvText(String(r.result)); r.readAsText(f);
+  e.target.value='';
+};
 
-$('dWeb').textContent=navigator.bluetooth?'Available':'Unavailable';$('dWeb').className=navigator.bluetooth?'good':'bad';
-$('dGatt').textContent='Disconnected';$('dSvc').textContent=$('dNotify').textContent=$('dWrite').textContent='Pending';
-$('connect').onclick=connect;$('disconnect').onclick=disconnect;$('start').onclick=begin;$('stop').onclick=end;$('simulate').onclick=simulate;$('export').onclick=csv;
-setInterval(()=>{const now=performance.now(),dt=(now-rateAt)/1000;if(dt>=1){$('rate').textContent=(rateCount/dt).toFixed(0)+' Hz';rateCount=0;rateAt=now}if(recording)metrics()},500);
+$('dWeb').textContent=navigator.bluetooth?'Available':'Unavailable'; $('dWeb').className=navigator.bluetooth?'good':'bad';
+$('dGatt').textContent='Disconnected'; $('dSvc').textContent=$('dNotify').textContent=$('dWrite').textContent='Pending';
+$('connect').onclick=connect; $('disconnect').onclick=disconnect; $('start').onclick=begin; $('stop').onclick=end; $('simulate').onclick=simulate; $('export').onclick=csv;
+setInterval(()=>{const now=performance.now(),dt=(now-rateAt)/1000; if(dt>=1){$('rate').textContent=(rateCount/dt).toFixed(0)+' Hz'; rateCount=0; rateAt=now} if(recording) metrics()},500);
+restore(); renderLearnUI();
 log('Ready. Expected UUIDs: service FFE5, notify FFE4, write FFE9.');
 log('Expected default data frame: 20 bytes beginning 55 61.');
 log('Place the sensor on the back of the hand or wrist; keep orientation fixed.');
+if(model) log('Restored trained learner from this browser.');
 draw();
 })();
 </script>
