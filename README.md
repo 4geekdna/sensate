@@ -1,42 +1,58 @@
 # Sensate
 
-Browser tools for a **WITMOTION WT901BLE** IMU.
+Browser-based WITMOTION WT901BLE tools: gait analysis and hand-gesture recording. Static HTML, no build step, no backend.
 
-Live site (enable Pages on `main` / root if it is not already on):
+## Live apps
 
-**https://4geekdna.github.io/sensate/**
+- Hub: https://4geekdna.github.io/sensate/
+- Gait Analyzer: https://4geekdna.github.io/sensate/gait.html
+- Hand Gestures: https://4geekdna.github.io/sensate/gesture.html
 
-## Apps
+## Gait Analyzer
 
-| File | Placement | Method |
-|---|---|---|
-| `gait.html` | Lower back / pelvis | Cadence and step timing |
-| `gesture.html` | Hand / wrist | Rule-based Rest / Wave / Flick / Punch / Twist + CSV |
-| `gesture-nn.html` | Dorsum of hand | Record custom gestures, train 1D CNN or MLP in TensorFlow.js, live classify |
+`gait.html` — IMU on the **lower back / pelvis**.
 
-## Neural-net app
+- Web Bluetooth connection to WT901BLE
+- FFE5 / FFE4 / FFE9 BLE diagnostics
+- 0x55 0x61 packet parser
+- Live acceleration, gyro, and orientation
+- Cadence and step timing
+- Step-time variability and regularity
+- Alternating-step timing symmetry proxy
+- Walking simulation for testing without hardware
+- CSV export for Python analysis
 
-`gesture-nn.html` is the advanced gesture studio:
+## Hand Gestures
 
-1. Web Bluetooth to WT901BLE (same FFE5 / UART profiles as Tone `wt901ble.html`).
-2. 9-channel windows: accel, gyro (scaled), roll / pitch / yaw relative to a zero pose.
-3. User-defined labels (defaults: Rest, Wave, Circle, Flick, Chop, Twist, Punch, Figure-8, Raise, Snap).
-4. On-device training with time-shift / scale / noise augmentation.
-5. Live softmax with temporal smoothing.
-6. Dataset export / import as JSON. Samples persist in `localStorage`.
+`gesture.html` — IMU on the **back of the hand or wrist**. Keep orientation fixed during a take.
 
-Mount: strap the module to the **back of the hand**, long axis toward the middle finger. Same orientation every session.
+- Same BLE stack, live IMU table, diagnostics, session control, and CSV export as gait
+- Accel-magnitude and gyro-magnitude charts
+- Live detector for Rest, Wave, Flick, Punch, and Twist (threshold / pattern on accel, gyro, and orientation)
+- In-browser learner: labeled ~500 ms windows, softmax classifier, stored in this browser
+- Train from a session (or Simulate Gestures, which auto-labels) then Use learner for live detection; rules remain the low-confidence fallback
+- Import a previous CSV to add training windows; Clear examples wipes the local model
+- Confidence-like score, recent-event log, and per-gesture counts
+- Manual label buttons (including Custom) that stamp `gesture_label` on incoming samples
+- Simulate Gestures for UI testing without hardware
+- Detector settings: punch / flick / rest / twist thresholds, minimum interval, smoothing
+- Session summary: duration, samples, detected counts, peak accel, peak gyro
 
-Plan on 12–20 samples per class at mixed speeds. Record the motion path, not only the end pose.
+CSV columns: `time_s, ax_g, ay_g, az_g, gx_dps, gy_dps, gz_dps, roll_deg, pitch_deg, yaw_deg, accel_mag_g, gyro_mag_dps, gesture_label, detected_gesture`
 
-## Browser support
+## Browser
 
-| Client | Sensor | Train / classify |
-|---|---|---|
-| Desktop Chrome / Edge | Web Bluetooth | Yes |
-| Android Chrome | Web Bluetooth | Yes |
-| iPhone Safari / Chrome | No BLE | Demo IMU + imported JSON |
+Use Chrome or Edge on a desktop platform with Web Bluetooth support. The site must be served from HTTPS; GitHub Pages provides this automatically.
 
-## Enable Pages
+## WT901BLE frames
 
-Repo settings → Pages → Deploy from branch → `main` → `/` (root).
+- Name filter prefix: `WT`
+- Service `0000ffe5-0000-1000-8000-00805f9a34fb`
+- Notify `0000ffe4-0000-1000-8000-00805f9a34fb`
+- Write `0000ffe9-0000-1000-8000-00805f9a34fb`
+- 20-byte frames starting `0x55 0x61`
+- Accel: s16/32768×16 g; gyro: s16/32768×2000 dps; angles: s16/32768×180 deg
+
+## Deployment
+
+`.github/workflows/pages.yml` automatically deploys the site to GitHub Pages whenever `main` is updated.
