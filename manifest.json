@@ -1,0 +1,9 @@
+{
+  "name": "Sensate Gestures",
+  "short_name": "Sensate",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#070b16",
+  "theme_color": "#070b16",
+  "description": "WT901BLE hand-gesture recorder and on-device neural net"
+}

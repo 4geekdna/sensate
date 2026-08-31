@@ -1,55 +1,49 @@
 # Sensate
 
-Browser-based WITMOTION WT901BLE tools: gait analysis and hand-gesture recording. Static HTML, no build step, no backend.
+Hand-gesture studio for a **WITMOTION WT901BLE** strapped to the back of the hand.
 
-## Live apps
+Live site (after GitHub Pages is enabled on `main` / root):
 
-- Hub: https://4geekdna.github.io/sensate/
-- Gait Analyzer: https://4geekdna.github.io/sensate/gait.html
-- Hand Gestures: https://4geekdna.github.io/sensate/gesture.html
+**https://4geekdna.github.io/sensate/**
 
-## Gait Analyzer
+## What it does
 
-`gait.html` — IMU on the **lower back / pelvis**.
+1. Connects to WT901BLE over Web Bluetooth (same FFE5 / UART profiles as the Tone `wt901ble.html` viewer).
+2. Streams 9-axis IMU: accel (g), gyro (°/s), roll / pitch / yaw.
+3. Records labeled windows of advanced gestures.
+4. Trains an on-device neural net with TensorFlow.js:
+   - **1D CNN** — default, good at motion *shape*
+   - **MLP** — smaller dense net
+5. Runs live classification with temporal smoothing.
 
-- Web Bluetooth connection to WT901BLE
-- FFE5 / FFE4 / FFE9 BLE diagnostics
-- 0x55 0x61 packet parser
-- Live acceleration, gyro, and orientation
-- Cadence and step timing
-- Step-time variability and regularity
-- Alternating-step timing symmetry proxy
-- Walking simulation for testing without hardware
-- CSV export for Python analysis
+No server. Samples stay in `localStorage`. Dataset JSON can be exported / imported.
 
-## Hand Gestures
+## Mount
 
-`gesture.html` — IMU on the **back of the hand or wrist**. Keep orientation fixed during a take.
+Tape or strap the module to the **dorsum of the hand**, long axis toward the middle finger, same orientation every session. The network learns that body frame.
 
-- Same BLE stack, live IMU table, diagnostics, session control, and CSV export as gait
-- Accel-magnitude and gyro-magnitude charts
-- Live detector for Rest, Wave, Flick, Punch, and Twist (threshold / pattern on accel, gyro, and orientation)
-- Confidence-like score, recent-event log, and per-gesture counts
-- Manual label buttons (including Custom) that stamp `gesture_label` on incoming samples
-- Simulate Gestures for UI testing without hardware
-- Detector settings: punch / flick / rest / twist thresholds, minimum interval, smoothing
-- Session summary: duration, samples, detected counts, peak accel, peak gyro
+Suggested labels (already in the UI):
 
-CSV columns: `time_s, ax_g, ay_g, az_g, gx_dps, gy_dps, gz_dps, roll_deg, pitch_deg, yaw_deg, accel_mag_g, gyro_mag_dps, gesture_label, detected_gesture`
+Rest · Wave · Circle · Flick · Chop · Twist · Punch · Figure-8 · Raise · Snap
 
-## Browser
+Record the *path* of the motion, not only the end pose. Plan on 12–20 samples per class, mixed speeds.
 
-Use Chrome or Edge on a desktop platform with Web Bluetooth support. The site must be served from HTTPS; GitHub Pages provides this automatically.
+## Browser support
 
-## WT901BLE frames
+| Client | Sensor | Train / classify |
+|---|---|---|
+| Desktop Chrome / Edge | Web Bluetooth | Yes |
+| Android Chrome | Web Bluetooth | Yes |
+| iPhone Safari / Chrome | **No BLE** | Demo IMU + imported JSON |
 
-- Name filter prefix: `WT`
-- Service `0000ffe5-0000-1000-8000-00805f9a34fb`
-- Notify `0000ffe4-0000-1000-8000-00805f9a34fb`
-- Write `0000ffe9-0000-1000-8000-00805f9a34fb`
-- 20-byte frames starting `0x55 0x61`
-- Accel: s16/32768×16 g; gyro: s16/32768×2000 dps; angles: s16/32768×180 deg
+iOS does not expose Web Bluetooth. Use **Demo IMU** to exercise the net, or record on Android/desktop and Import dataset on the phone.
 
-## Deployment
+## Enable Pages
 
-`.github/workflows/pages.yml` automatically deploys the site to GitHub Pages whenever `main` is updated.
+Repo settings → Pages → Deploy from branch → `main` → `/` (root).
+
+## Files
+
+- `index.html` — app
+- `manifest.json` — Add to Home Screen
+- `README.md` — this file
