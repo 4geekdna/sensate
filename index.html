@@ -11,8 +11,8 @@
 <body>
 <div class="wrap">
   <h1>Sensate</h1>
-  <div class="sub">Browser tools for the WITMOTION WT901BLE IMU. Connect over Web Bluetooth, record live IMU, and export CSV — no app install, no backend.</div>
-  <div class="pill">Chrome or Edge on desktop • HTTPS • Web Bluetooth</div>
+  <div class="sub">Browser tools for the WITMOTION WT901BLE IMU. Connect over Web Bluetooth, record live IMU, classify motion on-device, and export data — no backend.</div>
+  <div class="pill">Chrome or Edge on desktop / Android Chrome • HTTPS • Web Bluetooth</div>
   <div class="grid">
     <a class="card" href="gait.html">
       <div class="kicker">Lower back / pelvis</div>
@@ -20,12 +20,17 @@
       <div class="small">Live cadence, step timing, variability, and a walking simulation. Firm placement on the lower back or pelvis; keep orientation fixed for the whole walk.</div>
     </a>
     <a class="card" href="gesture.html">
-      <div class="kicker">Hand / wrist</div>
+      <div class="kicker">Hand / wrist • rules</div>
       <h2>Hand Gestures</h2>
-      <div class="small">Record and detect Rest, Wave, Flick, Punch, and Twist from a sensor on the back of the hand or wrist. Manual labels, simulation, and CSV export for training takes.</div>
+      <div class="small">Threshold detector for Rest, Wave, Flick, Punch, and Twist. Manual labels, simulation, and CSV export for training takes.</div>
+    </a>
+    <a class="card" href="gesture-nn.html">
+      <div class="kicker">Hand • neural net</div>
+      <h2>Gesture Neural Net</h2>
+      <div class="small">Record advanced custom gestures from a sensor on the dorsum of the hand. Train a 1D CNN or MLP in the browser with TensorFlow.js and run live classification.</div>
     </a>
   </div>
-  <div class="note">Use <strong>Chrome</strong> or <strong>Edge</strong> on a desktop OS. Web Bluetooth is not available in Firefox or Safari. GitHub Pages serves this site over HTTPS, which the Bluetooth API requires. Filter for devices named with prefix <code>WT</code>.</div>
+  <div class="note">Use <strong>Chrome</strong> or <strong>Edge</strong> (desktop) or <strong>Android Chrome</strong> for the sensor. Web Bluetooth is not available in Firefox or iOS Safari. GitHub Pages is HTTPS, which the Bluetooth API requires. Filter for devices named with prefix <code>WT</code>.</div>
 </div>
 </body>
 </html>

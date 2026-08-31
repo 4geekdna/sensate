@@ -1,32 +1,33 @@
 # Sensate
 
-Hand-gesture studio for a **WITMOTION WT901BLE** strapped to the back of the hand.
+Browser tools for a **WITMOTION WT901BLE** IMU.
 
-Live site (after GitHub Pages is enabled on `main` / root):
+Live site (enable Pages on `main` / root if it is not already on):
 
 **https://4geekdna.github.io/sensate/**
 
-## What it does
+## Apps
 
-1. Connects to WT901BLE over Web Bluetooth (same FFE5 / UART profiles as the Tone `wt901ble.html` viewer).
-2. Streams 9-axis IMU: accel (g), gyro (°/s), roll / pitch / yaw.
-3. Records labeled windows of advanced gestures.
-4. Trains an on-device neural net with TensorFlow.js:
-   - **1D CNN** — default, good at motion *shape*
-   - **MLP** — smaller dense net
-5. Runs live classification with temporal smoothing.
+| File | Placement | Method |
+|---|---|---|
+| `gait.html` | Lower back / pelvis | Cadence and step timing |
+| `gesture.html` | Hand / wrist | Rule-based Rest / Wave / Flick / Punch / Twist + CSV |
+| `gesture-nn.html` | Dorsum of hand | Record custom gestures, train 1D CNN or MLP in TensorFlow.js, live classify |
 
-No server. Samples stay in `localStorage`. Dataset JSON can be exported / imported.
+## Neural-net app
 
-## Mount
+`gesture-nn.html` is the advanced gesture studio:
 
-Tape or strap the module to the **dorsum of the hand**, long axis toward the middle finger, same orientation every session. The network learns that body frame.
+1. Web Bluetooth to WT901BLE (same FFE5 / UART profiles as Tone `wt901ble.html`).
+2. 9-channel windows: accel, gyro (scaled), roll / pitch / yaw relative to a zero pose.
+3. User-defined labels (defaults: Rest, Wave, Circle, Flick, Chop, Twist, Punch, Figure-8, Raise, Snap).
+4. On-device training with time-shift / scale / noise augmentation.
+5. Live softmax with temporal smoothing.
+6. Dataset export / import as JSON. Samples persist in `localStorage`.
 
-Suggested labels (already in the UI):
+Mount: strap the module to the **back of the hand**, long axis toward the middle finger. Same orientation every session.
 
-Rest · Wave · Circle · Flick · Chop · Twist · Punch · Figure-8 · Raise · Snap
-
-Record the *path* of the motion, not only the end pose. Plan on 12–20 samples per class, mixed speeds.
+Plan on 12–20 samples per class at mixed speeds. Record the motion path, not only the end pose.
 
 ## Browser support
 
@@ -34,16 +35,8 @@ Record the *path* of the motion, not only the end pose. Plan on 12–20 samples 
 |---|---|---|
 | Desktop Chrome / Edge | Web Bluetooth | Yes |
 | Android Chrome | Web Bluetooth | Yes |
-| iPhone Safari / Chrome | **No BLE** | Demo IMU + imported JSON |
-
-iOS does not expose Web Bluetooth. Use **Demo IMU** to exercise the net, or record on Android/desktop and Import dataset on the phone.
+| iPhone Safari / Chrome | No BLE | Demo IMU + imported JSON |
 
 ## Enable Pages
 
 Repo settings → Pages → Deploy from branch → `main` → `/` (root).
-
-## Files
-
-- `index.html` — app
-- `manifest.json` — Add to Home Screen
-- `README.md` — this file
