@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070b16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sensate Gestures">
+<title>Sensate · WT901BLE Hand Gestures</title>
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+<style>
+:root{
+  --bg:#070b16;--card:#121a2c;--card2:#0d1424;--ink:#f4f7fb;--muted:#8ea0bc;
+  --line:#24304a;--accent:#6ea8ff;--good:#2dd4bf;--warn:#fbbf24;--bad:#fb7185;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,#15203a 0%,#070b16 50%);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:18px 14px 72px}
+h1{margin:0;font-size:clamp(26px,6vw,40px);letter-spacing:-.03em}
+.sub{color:var(--muted);margin:6px 0 16px;line-height:1.45}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+button,.chip,select,input[type=text],input[type=number]{border:1px solid var(--line);background:#1a2540;color:#fff;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:700}
+button{cursor:pointer;background:#3b6fd6;border-color:#3b6fd6}
+button.sec{background:#1a2540;border-color:var(--line)}
+button.danger{background:#7f1d1d;border-color:#7f1d1d}
+button:disabled{opacity:.45;cursor:not-allowed}
+.chip{background:#18233c;font-weight:650;cursor:pointer}
+.chip.on{background:#25407a;border-color:#6ea8ff}
+.status{display:flex;gap:10px;align-items:center;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0}
+.dot{width:10px;height:10px;border-radius:50%;background:#64748b;flex:none}
+.dot.ok{background:var(--good)}.dot.bad{background:var(--bad)}.dot.warn{background:var(--warn)}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.card h2{margin:0 0 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#c5d3ea}
+canvas{width:100%;background:#0a1020;border-radius:12px;display:block}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.metric{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px}
+.metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.metric b{font-size:18px;font-variant-numeric:tabular-nums}
+.live{font-size:clamp(28px,7vw,48px);font-weight:800;letter-spacing:-.03em;min-height:54px}
+.conf{height:8px;background:#1a2438;border-radius:99px;overflow:hidden;margin:8px 0 12px}
+.conf>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2dd4bf,#6ea8ff);transition:width .15s}
+.list{max-height:280px;overflow:auto;font-size:13px}
+.sample{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid rgba(255,255,255,.06)}
+.bars .bar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:13px}
+.bars .track{flex:1;height:8px;background:#1a2438;border-radius:99px;overflow:hidden}
+.bars .track i{display:block;height:100%;background:#6ea8ff}
+.warnbox{display:none;background:#2a1c10;border:1px solid #7a4a1c;color:#ffd7a0;padding:10px 12px;border-radius:12px;margin:8px 0}
+.log{white-space:pre-wrap;word-break:break-word;max-height:160px;overflow:auto;color:#9ff0c8;font:12px/1.45 ui-monospace,Menlo,monospace;background:#071018;padding:10px;border-radius:10px}
+.hint{color:var(--muted);font-size:13px;line-height:1.5}
+@media(max-width:860px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="row" style="justify-content:space-between;align-items:flex-start">
+    <div>
+      <h1>Sensate · Neural Net</h1>
+      <div class="sub">WT901BLE on the hand → record advanced gestures → train a 1D CNN or MLP in the browser → live classify. On-device. No cloud.</div>
+    </div>
+    <a href="index.html" class="chip" style="text-decoration:none;color:#fff">Sensate hub</a>
+  </div>
+  <div id="warn" class="warnbox"></div>
+  <div class="row">
+    <button id="btnConnect">Find WT901BLE</button>
+    <button id="btnDisc" class="danger" disabled>Disconnect</button>
+    <button id="btnZero" class="sec" disabled>Zero pose</button>
+    <button id="btnDemo" class="sec">Demo IMU (no sensor)</button>
+    <button id="btnStopDemo" class="sec" disabled>Stop demo</button>
+  </div>
+  <div class="status">
+    <div id="dot" class="dot"></div>
+    <div>
+      <div id="status"><b>Ready</b></div>
+      <div class="sub" id="dev" style="margin:0">No sensor · attach the module to the back of the hand, X axis along the fingers</div>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h2>Live IMU</h2>
+      <canvas id="wave" height="180"></canvas>
+      <div class="metrics" style="margin-top:10px">
+        <div class="metric"><span>Accel</span><b id="acc">0 / 0 / 0 g</b></div>
+        <div class="metric"><span>Gyro</span><b id="gyr">0 / 0 / 0 °/s</b></div>
+        <div class="metric"><span>R / P / Y</span><b id="rpy">0 / 0 / 0°</b></div>
+        <div class="metric"><span>Rate</span><b id="hz">0 Hz</b></div>
+        <div class="metric"><span>Buffer</span><b id="buf">0 / 64</b></div>
+        <div class="metric"><span>Energy</span><b id="eng">0.00</b></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Recognition</h2>
+      <div class="live" id="pred">—</div>
+      <div class="conf"><i id="confBar"></i></div>
+      <div class="bars" id="bars"></div>
+      <div class="hint" style="margin-top:10px">Hold still for Rest. Move cleanly through one gesture.</div>
+    </div>
+  </div>
+  <div class="grid" style="margin-top:12px">
+    <div class="card">
+      <h2>Record</h2>
+      <div class="row" id="labels"></div>
+      <div class="row">
+        <input id="newLabel" type="text" placeholder="custom gesture name" style="flex:1;min-width:160px">
+        <button id="addLabel" class="sec">Add label</button>
+      </div>
+      <div class="row">
+        <label class="hint">Window <input id="winSize" type="number" value="64" min="24" max="128" style="width:72px;margin-left:6px"></label>
+        <label class="hint">Seconds <input id="recSec" type="number" value="1.3" min="0.4" max="4" step="0.1" style="width:72px;margin-left:6px"></label>
+        <button id="btnRec">Record sample</button>
+        <button id="btnBurst" class="sec">Record 5</button>
+      </div>
+      <div class="hint" id="recHint">Select a label, then record. Aim for 12–20 samples per class.</div>
+      <div class="list" id="samples"></div>
+    </div>
+    <div class="card">
+      <h2>Neural net</h2>
+      <div class="row">
+        <select id="arch">
+          <option value="cnn">1D CNN (better for motion shapes)</option>
+          <option value="mlp">MLP dense net</option>
+        </select>
+        <select id="epochs">
+          <option value="25">25 epochs</option>
+          <option value="40" selected>40 epochs</option>
+          <option value="80">80 epochs</option>
+        </select>
+      </div>
+      <div class="row">
+        <button id="btnTrain">Train model</button>
+        <button id="btnListen" class="sec" disabled>Start live classify</button>
+        <button id="btnListenOff" class="danger" disabled>Stop classify</button>
+      </div>
+      <div class="metrics">
+        <div class="metric"><span>Samples</span><b id="nSamp">0</b></div>
+        <div class="metric"><span>Classes</span><b id="nCls">0</b></div>
+        <div class="metric"><span>Val acc</span><b id="accVal">—</b></div>
+      </div>
+      <canvas id="loss" height="110" style="margin-top:10px"></canvas>
+      <div class="row" style="margin-top:10px">
+        <button id="expData" class="sec">Export dataset</button>
+        <button id="impData" class="sec">Import dataset</button>
+        <button id="expModel" class="sec" disabled>Download model JSON</button>
+        <button id="clrAll" class="danger">Clear all</button>
+        <input id="fileIn" type="file" accept="application/json" hidden>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h2>How to mount and collect</h2>
+    <div class="hint">Tape or strap the WT901BLE to the <b>dorsum of the hand</b>, long axis toward the middle finger. Same orientation every session. Suggested set: Rest, Wave, Circle, Flick, Chop, Twist, Punch, Figure-8, Raise, Snap. iPhone Safari has no Web Bluetooth — use desktop/Android Chrome or Demo IMU.</div>
+    <pre class="log" id="log">Ready.</pre>
+  </div>
+</main>
+<script src="gesture-nn.js"></script>
+</body>
+</html>
