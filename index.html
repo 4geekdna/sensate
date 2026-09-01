@@ -5,31 +5,57 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Sensate • WT901BLE</title>
 <style>
-:root{--bg:#08111f;--card:#101b2e;--text:#eef5ff;--muted:#9eb0c9;--line:#2a3b5b;--blue:#79adff;--green:#5cda91}*{box-sizing:border-box}body{margin:0;background:linear-gradient(#07101d,#0c1424);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:920px;margin:auto;padding:28px 18px 48px}h1{margin:0;font-size:34px}.sub{color:var(--muted);margin-top:8px;line-height:1.55}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}@media(max-width:720px){.grid{grid-template-columns:1fr}}a.card{display:block;background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:20px;color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}a.card:hover{border-color:var(--blue);transform:translateY(-1px)}.kicker{color:var(--blue);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}h2{margin:0 0 8px;font-size:22px}.small{color:var(--muted);font-size:14px;line-height:1.55}.pill{display:inline-block;border-radius:999px;padding:7px 10px;background:#233451;color:#c8d6ea;font-size:13px;margin-top:18px}.note{margin-top:28px;background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:16px;color:var(--muted);font-size:14px;line-height:1.55}code{color:var(--green)}
+:root{--bg:#08111f;--card:#101b2e;--text:#eef5ff;--muted:#9eb0c9;--line:#2a3b5b;--blue:#79adff;--green:#5cda91}*{box-sizing:border-box}body{margin:0;background:linear-gradient(#07101d,#0c1424);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:920px;margin:auto;padding:28px 18px 48px}h1{margin:0;font-size:34px}.sub{color:var(--muted);margin-top:8px;line-height:1.55}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}@media(max-width:720px){.grid{grid-template-columns:1fr}}a.card{display:block;background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:20px;color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}a.card:hover{border-color:var(--blue);transform:translateY(-1px)}.kicker{color:var(--blue);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}h2{margin:0 0 8px;font-size:22px}.small{color:var(--muted);font-size:14px;line-height:1.55}.pill{display:inline-block;border-radius:999px;padding:7px 10px;background:#233451;color:#c8d6ea;font-size:13px;margin-top:18px}.note{margin-top:28px;background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:16px;color:var(--muted);font-size:14px;line-height:1.55}code{color:var(--green)}.section{margin-top:32px}.section-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Sensate</h1>
-  <div class="sub">Browser tools for the WITMOTION WT901BLE IMU. Connect over Web Bluetooth, record live IMU, classify motion on-device, and export data — no backend.</div>
+  <div class="sub">Browser tools for the WITMOTION WT901BLE IMU. Connect over Web Bluetooth, view live IMU, record gait and gestures, classify motion on-device, and export data — no backend.</div>
   <div class="pill">Chrome or Edge on desktop / Android Chrome • HTTPS • Web Bluetooth</div>
-  <div class="grid">
-    <a class="card" href="gait.html">
-      <div class="kicker">Lower back / pelvis</div>
-      <h2>Gait Analyzer</h2>
-      <div class="small">Live cadence, step timing, variability, and a walking simulation. Firm placement on the lower back or pelvis; keep orientation fixed for the whole walk.</div>
-    </a>
-    <a class="card" href="gesture.html">
-      <div class="kicker">Hand / wrist • rules</div>
-      <h2>Hand Gestures</h2>
-      <div class="small">Threshold detector for Rest, Wave, Flick, Punch, and Twist. Manual labels, simulation, and CSV export for training takes.</div>
-    </a>
-    <a class="card" href="gesture-nn.html">
-      <div class="kicker">Hand • neural net</div>
-      <h2>Gesture Neural Net</h2>
-      <div class="small">Record advanced custom gestures from a sensor on the dorsum of the hand. Train a 1D CNN or MLP in the browser with TensorFlow.js and run live classification.</div>
-    </a>
+
+  <div class="section">
+    <div class="section-title">Gait &amp; gestures</div>
+    <div class="grid">
+      <a class="card" href="gait.html">
+        <div class="kicker">Lower back / pelvis</div>
+        <h2>Gait Analyzer</h2>
+        <div class="small">Live cadence, step timing, variability, and a walking simulation. Firm placement on the lower back or pelvis; keep orientation fixed for the whole walk.</div>
+      </a>
+      <a class="card" href="gesture.html">
+        <div class="kicker">Hand / wrist • rules</div>
+        <h2>Hand Gestures</h2>
+        <div class="small">Threshold detector for Rest, Wave, Flick, Punch, and Twist. Manual labels, simulation, and CSV export for training takes.</div>
+      </a>
+      <a class="card" href="gesture-nn.html">
+        <div class="kicker">Hand • neural net</div>
+        <h2>Gesture Neural Net</h2>
+        <div class="small">Record advanced custom gestures from a sensor on the dorsum of the hand. Train a 1D CNN or MLP in the browser with TensorFlow.js and run live classification.</div>
+      </a>
+    </div>
   </div>
+
+  <div class="section">
+    <div class="section-title">Generic IMU viewers</div>
+    <div class="grid">
+      <a class="card" href="sensor-wit.html">
+        <div class="kicker">Single sensor</div>
+        <h2>Wit IMU</h2>
+        <div class="small">One WT901BLE at a time. Live roll/pitch/yaw, accel, gyro, and a 3D cube. Mag, quaternion, and temp on request.</div>
+      </a>
+      <a class="card" href="sensor-wits.html">
+        <div class="kicker">Multi-sensor</div>
+        <h2>Wit IMUs</h2>
+        <div class="small">Several WT901s at once. Each Add sensor opens another picker and a live cube. Same BLE 5.0 protocol.</div>
+      </a>
+      <a class="card" href="wt901ble.html">
+        <div class="kicker">Diagnostics</div>
+        <h2>WT901BLE</h2>
+        <div class="small">Chrome Web Bluetooth diagnostics: GATT profiles, packet rate, raw BLE log, and zero/reference orientation.</div>
+      </a>
+    </div>
+  </div>
+
   <div class="note">Use <strong>Chrome</strong> or <strong>Edge</strong> (desktop) or <strong>Android Chrome</strong> for the sensor. Web Bluetooth is not available in Firefox or iOS Safari. GitHub Pages is HTTPS, which the Bluetooth API requires. Filter for devices named with prefix <code>WT</code>.</div>
 </div>
 </body>
