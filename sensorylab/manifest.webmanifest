@@ -1,0 +1,28 @@
+{
+  "id": "./",
+  "name": "SensoryLab WT901BLE",
+  "short_name": "SensoryLab",
+  "description": "WT901BLE sensor monitor with relative angle, stability, and session logging.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07101f",
+  "theme_color": "#0b1324",
+  "categories": ["health", "utilities", "education"],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

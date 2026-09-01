@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1324" />
+    <meta
+      name="description"
+      content="Installable WT901BLE sensor monitor with relative angle, stability, and session logging."
+    />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>SensoryLab</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <img src="./icons/icon.svg" alt="" width="44" height="44" />
+          <div>
+            <h1>SensoryLab</h1>
+            <p>WT901BLE · Phase 1</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <span id="offlineBadge" class="badge hidden">Offline</span>
+          <button id="installButton" class="button secondary hidden" type="button">
+            Install
+          </button>
+        </div>
+      </header>
+
+      <aside id="supportBanner" class="support-banner" aria-live="polite"></aside>
+
+      <nav class="tabbar" aria-label="SensoryLab sections">
+        <button class="tab active" data-tab="devices" type="button">Devices</button>
+        <button class="tab" data-tab="services" type="button">Services</button>
+        <button class="tab" data-tab="monitor" type="button">Monitor</button>
+        <button class="tab" data-tab="sessions" type="button">Sessions</button>
+        <button class="tab" data-tab="diagnostics" type="button">Diagnostics</button>
+      </nav>
+
+      <main>
+        <section id="devicesPanel" class="panel active" data-panel="devices">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Bluetooth sensors</p>
+              <h2>Devices</h2>
+              <p>Add each WT901BLE separately through Chrome’s device chooser.</p>
+            </div>
+            <div class="button-row">
+              <button id="demoButton" class="button secondary" type="button">
+                Start demo
+              </button>
+              <button id="addSensorButton" class="button primary" type="button">
+                Add sensor
+              </button>
+            </div>
+          </div>
+          <div id="deviceSummary" class="summary-grid"></div>
+          <div id="devicesList" class="card-grid"></div>
+        </section>
+
+        <section id="servicesPanel" class="panel" data-panel="services">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Reusable analysis</p>
+              <h2>Services</h2>
+              <p>Assign devices and select what each service calculates.</p>
+            </div>
+            <button id="addServiceButton" class="button primary" type="button">
+              Add service
+            </button>
+          </div>
+          <div id="servicesList" class="stack"></div>
+        </section>
+
+        <section id="monitorPanel" class="panel" data-panel="monitor">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Live calculations</p>
+              <h2>Monitor</h2>
+              <p>Active service outputs update from the latest sensor samples.</p>
+            </div>
+            <div class="record-controls">
+              <span id="recordingStatus" class="badge">Not recording</span>
+              <button id="recordButton" class="button danger" type="button">
+                Start recording
+              </button>
+            </div>
+          </div>
+          <div id="monitorList" class="monitor-grid"></div>
+        </section>
+
+        <section id="sessionsPanel" class="panel" data-panel="sessions">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Local recordings</p>
+              <h2>Sessions</h2>
+              <p>Sessions stay on this browser until exported or deleted.</p>
+            </div>
+            <button id="refreshSessionsButton" class="button secondary" type="button">
+              Refresh
+            </button>
+          </div>
+          <div id="sessionsList" class="stack"></div>
+        </section>
+
+        <section id="diagnosticsPanel" class="panel" data-panel="diagnostics">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Connection evidence</p>
+              <h2>Diagnostics</h2>
+              <p>Use this log when a device does not connect or decode.</p>
+            </div>
+            <div class="button-row">
+              <button id="copyDiagnosticsButton" class="button secondary" type="button">
+                Copy
+              </button>
+              <button id="clearDiagnosticsButton" class="button secondary" type="button">
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="diagnostic-tip">
+            Desktop Chrome also provides <strong>chrome://bluetooth-internals</strong>
+            for low-level Bluetooth inspection.
+          </div>
+          <div id="diagnosticsList" class="diagnostics" role="log"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="serviceDialog" class="modal">
+      <form id="serviceForm" method="dialog">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Service configuration</p>
+            <h2 id="serviceDialogTitle">Add service</h2>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="Close" type="submit">×</button>
+        </div>
+
+        <input id="serviceId" type="hidden" />
+        <label>
+          Service name
+          <input id="serviceName" required maxlength="60" autocomplete="off" />
+        </label>
+
+        <label>
+          Service type
+          <select id="serviceType">
+            <option value="display">Display</option>
+            <option value="angle">Relative angle</option>
+            <option value="stability">Engineering stability</option>
+          </select>
+        </label>
+
+        <fieldset>
+          <legend>Assigned devices</legend>
+          <div id="serviceDevices" class="choice-grid"></div>
+        </fieldset>
+
+        <fieldset id="elementFieldset">
+          <legend>Sensor elements</legend>
+          <div id="serviceElements" class="choice-grid"></div>
+        </fieldset>
+
+        <label id="windowField" class="hidden">
+          Stability window
+          <select id="stabilityWindow">
+            <option value="1000">1 second</option>
+            <option value="2000">2 seconds</option>
+            <option value="5000">5 seconds</option>
+            <option value="10000">10 seconds</option>
+          </select>
+        </label>
+
+        <div class="toggle-row">
+          <label class="toggle">
+            <input id="serviceActive" type="checkbox" checked />
+            <span>Active</span>
+          </label>
+          <label class="toggle">
+            <input id="serviceLogging" type="checkbox" checked />
+            <span>Log derived values</span>
+          </label>
+        </div>
+
+        <p id="serviceFormError" class="form-error" aria-live="polite"></p>
+        <div class="modal-actions">
+          <button class="button secondary" value="cancel" type="submit">Cancel</button>
+          <button id="saveServiceButton" class="button primary" type="button">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast hidden" role="status"></div>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
+
