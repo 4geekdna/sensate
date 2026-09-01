@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sensate • Wit IMUs</title>
+<style>
+:root{--bg:#08111f;--card:#101b2e;--card2:#17253d;--text:#eef5ff;--muted:#9eb0c9;--line:#2a3b5b;--blue:#79adff;--green:#5cda91;--red:#ff7373;--amber:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(#07101d,#0c1424);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:960px;margin:auto;padding:18px 18px 48px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+h1{margin:0;font-size:30px}.sub{color:var(--muted);margin-top:5px;line-height:1.5}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+button{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:700;background:var(--blue);color:#061120;cursor:pointer}
+button.alt{background:#273a5a;color:var(--text)}button.red{background:var(--red);color:white}button:disabled{opacity:.45}
+button.ghost{padding:8px 12px;font-size:13px}
+.status,.pill{border-radius:999px;padding:7px 10px;background:#233451;color:#c8d6ea;font-size:13px}
+.ok{color:var(--green)}.bad{color:var(--red)}
+.small{color:var(--muted);font-size:13px;line-height:1.5}
+a.hub{border-radius:999px;padding:7px 10px;background:#273a5a;color:var(--text);font-size:13px;text-decoration:none;font-weight:700}
+.card{background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:15px;margin-top:14px}
+.note{background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:14px;color:var(--muted);font-size:13.5px;line-height:1.55;margin-top:14px}
+code{color:var(--green)}a{color:var(--blue)}
+.empty{border:1px dashed var(--line);border-radius:16px;padding:28px 16px;text-align:center;color:var(--muted);font-size:14px;margin-top:14px}
+.sensors{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+@media(min-width:760px){.sensors{grid-template-columns:1fr 1fr}}
+.scard{background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:14px;min-width:0}
+.scard-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.scard-name{font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scard-hz{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stage{height:150px;background:#091425;border:1px solid #263956;border-radius:12px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;perspective:420px;overflow:hidden}
+.cube{width:72px;height:72px;position:relative;transform-style:preserve-3d;transform:rotateX(-18deg) rotateY(28deg)}
+.face{position:absolute;width:72px;height:72px;border:1px solid rgba(121,173,255,.5);background:rgba(121,173,255,.12);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#79adff}
+.face.f{transform:translateZ(36px)}.face.bk{transform:rotateY(180deg) translateZ(36px)}
+.face.r{transform:rotateY(90deg) translateZ(36px)}.face.l{transform:rotateY(-90deg) translateZ(36px)}
+.face.t{transform:rotateX(90deg) translateZ(36px);background:rgba(92,218,145,.18);color:#5cda91;border-color:rgba(92,218,145,.5)}
+.face.b{transform:rotateX(-90deg) translateZ(36px)}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.metric{background:#0b1628;border:1px solid #263956;border-radius:10px;padding:8px 8px 10px}
+.metric .k{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.metric .v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:3px}
+.metric .u{font-size:10px;color:var(--muted)}
+.err{color:var(--red);font-size:13px;min-height:1.2em;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div><h1>Sensate • Wit IMUs</h1><div class="sub">Several WT901s at once. Each Add sensor opens another picker and a live cube. Same BLE 5.0 protocol as Wit IMU.</div></div><div class="row"><a class="hub" href="index.html">Sensate</a><span id="rate" class="pill">0 Hz total</span></div></div>
+<div class="card"><div class="row"><button id="connect">Add sensor</button><button id="any" class="alt">Add any BLE device</button><button id="discAll" class="red" disabled>Disconnect all</button><span id="status" class="status">No sensors</span></div>
+<div class="small" style="margin-top:10px">Chrome or Edge on desktop / Android Chrome. Names filtered with prefix <code>WT</code>. Single-sensor page: <a href="sensor-wit.html">Wit IMU</a>.</div></div>
+<div class="empty" id="empty">No sensors yet. Tap Add sensor and pick a WT901.</div>
+<div class="sensors" id="sensors"></div>
+<p class="err" id="err"></p>
+<div class="note">Same stack as Gait and Gestures: service FFE5, notify FFE4, write FFE9. Live frames are 20 bytes starting <code>55 61</code>. Mag / quat / temp use register-read replies <code>55 71</code>.</div>
+</div>
+<script>
+(()=>{'use strict';
+const S='0000ffe5-0000-1000-8000-00805f9a34fb',N='0000ffe4-0000-1000-8000-00805f9a34fb',W='0000ffe9-0000-1000-8000-00805f9a34fb';
+const TINTS=[
+  ['rgba(121,173,255,.5)','rgba(121,173,255,.12)'],
+  ['rgba(92,218,145,.5)','rgba(92,218,145,.12)'],
+  ['rgba(255,209,102,.5)','rgba(255,209,102,.12)'],
+  ['rgba(255,115,115,.5)','rgba(255,115,115,.12)'],
+  ['rgba(196,181,253,.5)','rgba(196,181,253,.12)'],
+  ['rgba(244,114,182,.5)','rgba(244,114,182,.12)']
+];
+const $=id=>document.getElementById(id);
+const sensors=new Map();
+let nextTint=0,hzTimer=null;
+function s16(lo,hi){let v=(hi<<8)|lo;return v&0x8000?v-65536:v}
+function fmt(n,d){return Number.isFinite(n)?n.toFixed(d):'—'}
+function setErr(m){$('err').textContent=m||''}
+function setHead(){
+  const n=sensors.size;
+  const live=[...sensors.values()].filter(s=>s.live).length;
+  $('status').textContent=n===0?'No sensors':live+' live · '+n+' connected';
+  $('status').className='status'+(live?' ok':n?'':'');
+  $('discAll').disabled=n===0;
+  $('empty').style.display=n?'none':'block';
+}
+function metric(k,id,u){return `<div class="metric"><div class="k">${k}</div><div class="v" data-k="${id}">—</div><div class="u">${u}</div></div>`}
+function addCard(s){
+  const tint=TINTS[nextTint++%TINTS.length];
+  const el=document.createElement('article');
+  el.className='scard';
+  el.innerHTML=`
+    <div class="scard-head"><div class="scard-name"></div><span class="scard-hz" data-k="hz">0 Hz</span></div>
+    <div class="stage"><div class="cube" data-k="cube">
+      <div class="face f">+Y</div><div class="face bk">-Y</div>
+      <div class="face r">+X</div><div class="face l">-X</div>
+      <div class="face t">+Z</div><div class="face b">-Z</div>
+    </div></div>
+    <div class="grid">
+      ${metric('Roll','roll','deg')}${metric('Pitch','pitch','deg')}${metric('Yaw','yaw','deg')}
+      ${metric('Accel X','ax','g')}${metric('Accel Y','ay','g')}${metric('Accel Z','az','g')}
+      ${metric('Gyro X','gx','°/s')}${metric('Gyro Y','gy','°/s')}${metric('Gyro Z','gz','°/s')}
+    </div>
+    <div class="row" style="margin-bottom:10px">
+      <button class="alt ghost" type="button" data-act="mag">Read mag</button>
+      <button class="alt ghost" type="button" data-act="quat">Read quat</button>
+      <button class="alt ghost" type="button" data-act="temp">Read temp</button>
+      <button class="red ghost" type="button" data-act="disc">Disconnect</button>
+    </div>
+    <div class="grid">
+      ${metric('Mag','mag','raw')}${metric('Quat','quat','q0..q3')}${metric('Temp','temp','°C')}
+    </div>`;
+  el.querySelector('.scard-name').textContent=s.name;
+  el.querySelectorAll('.face').forEach(f=>{
+    if(!f.classList.contains('t')){f.style.borderColor=tint[0];f.style.background=tint[1]}
+  });
+  el.querySelector('[data-k="mag"]').style.fontSize='12px';
+  el.querySelector('[data-k="quat"]').style.fontSize='12px';
+  el.onclick=ev=>{
+    const act=ev.target&&ev.target.dataset&&ev.target.dataset.act;
+    if(!act)return;
+    if(act==='disc')disconnectOne(s.id);
+    if(act==='mag')sendCmd(s,[0xFF,0xAA,0x27,0x3A,0x00]);
+    if(act==='quat')sendCmd(s,[0xFF,0xAA,0x27,0x51,0x00]);
+    if(act==='temp')sendCmd(s,[0xFF,0xAA,0x27,0x40,0x00]);
+  };
+  $('sensors').appendChild(el);
+  s.el=el;
+  s.set=(k,v)=>{const n=el.querySelector('[data-k="'+k+'"]');if(n)n.textContent=v};
+  s.cube=el.querySelector('[data-k="cube"]');
+}
+function parsePacket(s,p){
+  if(p.length<20||p[0]!==0x55)return;
+  if(p[1]===0x61){
+    const ax=s16(p[2],p[3])/32768*16,ay=s16(p[4],p[5])/32768*16,az=s16(p[6],p[7])/32768*16;
+    const gx=s16(p[8],p[9])/32768*2000,gy=s16(p[10],p[11])/32768*2000,gz=s16(p[12],p[13])/32768*2000;
+    const roll=s16(p[14],p[15])/32768*180,pitch=s16(p[16],p[17])/32768*180,yaw=s16(p[18],p[19])/32768*180;
+    s.set('ax',fmt(ax,3));s.set('ay',fmt(ay,3));s.set('az',fmt(az,3));
+    s.set('gx',fmt(gx,1));s.set('gy',fmt(gy,1));s.set('gz',fmt(gz,1));
+    s.set('roll',fmt(roll,1));s.set('pitch',fmt(pitch,1));s.set('yaw',fmt(yaw,1));
+    if(s.cube)s.cube.style.transform=`rotateX(${-pitch}deg) rotateZ(${roll}deg) rotateY(${yaw}deg)`;
+    const now=performance.now();
+    s.pktTimes.push(now);
+    s.pktTimes=s.pktTimes.filter(t=>now-t<1000);
+    s.live=true;
+  }else if(p[1]===0x71){
+    const reg=p[2];
+    if(reg===0x3a)s.set('mag',`${s16(p[4],p[5])}  ${s16(p[6],p[7])}  ${s16(p[8],p[9])}`);
+    else if(reg===0x51)s.set('quat',[4,6,8,10].map(o=>(s16(p[o],p[o+1])/32768).toFixed(3)).join('  '));
+    else if(reg===0x40)s.set('temp',fmt(s16(p[4],p[5])/100,2));
+  }
+}
+function ingest(s,bytes){
+  for(const b of bytes)s.rx.push(b);
+  while(s.rx.length>=20){
+    while(s.rx.length&&s.rx[0]!==0x55)s.rx.shift();
+    if(s.rx.length<20)return;
+    if(s.rx[1]===0x61||s.rx[1]===0x71)parsePacket(s,s.rx.splice(0,20));
+    else s.rx.shift();
+  }
+  if(s.rx.length>256)s.rx=s.rx.slice(-64);
+}
+async function connect(acceptAll){
+  setErr('');
+  if(!navigator.bluetooth){setErr('Use Chrome or Edge on desktop or Android. No native iOS BLE.');return}
+  $('status').textContent='Choosing device…';
+  try{
+    const opts=acceptAll
+      ?{acceptAllDevices:true,optionalServices:[S]}
+      :{filters:[{namePrefix:'WT'}],optionalServices:[S]};
+    const device=await navigator.bluetooth.requestDevice(opts);
+    if(sensors.has(device.id)){setErr((device.name||'Device')+' is already connected.');setHead();return}
+    $('status').textContent='Connecting '+(device.name||'sensor')+'…';
+    const server=await device.gatt.connect();
+    const svc=await server.getPrimaryService(S);
+    const notifyChar=await svc.getCharacteristic(N);
+    let writeChar=null;
+    try{writeChar=await svc.getCharacteristic(W)}catch(_){}
+    const s={id:device.id,name:device.name||'sensor',device,writeChar,notifyChar,rx:[],pktTimes:[],live:false};
+    await s.notifyChar.startNotifications();
+    s.notifyChar.addEventListener('characteristicvaluechanged',e=>{
+      const v=e.target.value;
+      ingest(s,new Uint8Array(v.buffer,v.byteOffset,v.byteLength));
+    });
+    device.addEventListener('gattserverdisconnected',()=>removeSensor(s.id,true));
+    sensors.set(s.id,s);
+    addCard(s);
+    try{localStorage.setItem('sensate-wits-last',JSON.stringify([...sensors.values()].map(x=>x.name)))}catch(_){}
+    setHead();
+    if(!hzTimer)hzTimer=setInterval(tickHz,400);
+  }catch(e){
+    if(e&&e.name==='NotFoundError')setHead();
+    else{setErr(e.message||String(e));setHead()}
+  }
+}
+function tickHz(){
+  let total=0;
+  for(const s of sensors.values()){const hz=s.pktTimes.length;total+=hz;s.set('hz',hz+' Hz')}
+  $('rate').textContent=total+' Hz total';
+}
+function removeSensor(id,alreadyOff){
+  const s=sensors.get(id);if(!s)return;
+  if(!alreadyOff){try{if(s.device&&s.device.gatt.connected)s.device.gatt.disconnect()}catch(_){}}
+  if(s.el)s.el.remove();
+  sensors.delete(id);
+  setHead();
+  if(!sensors.size){$('rate').textContent='0 Hz total';if(hzTimer){clearInterval(hzTimer);hzTimer=null}}
+}
+function disconnectOne(id){removeSensor(id,false)}
+function disconnectAll(){[...sensors.keys()].forEach(id=>removeSensor(id,false))}
+async function sendCmd(s,bytes){if(!s.writeChar)return;try{await s.writeChar.writeValue(new Uint8Array(bytes))}catch(e){setErr(e.message||String(e))}}
+$('connect').onclick=()=>connect(false);
+$('any').onclick=()=>connect(true);
+$('discAll').onclick=disconnectAll;
+})();
+</script>
+</body>
+</html>
