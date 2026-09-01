@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sensate • Wit IMU</title>
+<style>
+:root{--bg:#08111f;--card:#101b2e;--card2:#17253d;--text:#eef5ff;--muted:#9eb0c9;--line:#2a3b5b;--blue:#79adff;--green:#5cda91;--red:#ff7373;--amber:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(#07101d,#0c1424);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:720px;margin:auto;padding:18px 18px 48px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+h1{margin:0;font-size:30px}.sub{color:var(--muted);margin-top:5px;line-height:1.5}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}
+button{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:700;background:var(--blue);color:#061120;cursor:pointer}
+button.alt{background:#273a5a;color:var(--text)}button.red{background:var(--red);color:white}button:disabled{opacity:.45}
+.status,.pill{border-radius:999px;padding:7px 10px;background:#233451;color:#c8d6ea;font-size:13px}
+.ok{color:var(--green)}.bad{color:var(--red)}
+.small{color:var(--muted);font-size:13px;line-height:1.5}
+a.hub{border-radius:999px;padding:7px 10px;background:#273a5a;color:var(--text);font-size:13px;text-decoration:none;font-weight:700}
+.card{background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:15px;margin-top:14px}
+.note{background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:14px;color:var(--muted);font-size:13.5px;line-height:1.55;margin-top:14px}
+code{color:var(--green)}
+.stage{height:180px;background:#091425;border:1px solid #263956;border-radius:12px;display:flex;align-items:center;justify-content:center;perspective:420px;overflow:hidden}
+.cube{width:88px;height:88px;position:relative;transform-style:preserve-3d;transform:rotateX(-18deg) rotateY(28deg)}
+.face{position:absolute;width:88px;height:88px;border:1px solid rgba(121,173,255,.5);background:rgba(121,173,255,.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#79adff}
+.face.f{transform:translateZ(44px)}.face.bk{transform:rotateY(180deg) translateZ(44px)}
+.face.r{transform:rotateY(90deg) translateZ(44px)}.face.l{transform:rotateY(-90deg) translateZ(44px)}
+.face.t{transform:rotateX(90deg) translateZ(44px);background:rgba(92,218,145,.18);color:#5cda91;border-color:rgba(92,218,145,.5)}
+.face.b{transform:rotateX(-90deg) translateZ(44px)}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+.metric{background:#0b1628;border:1px solid #263956;border-radius:12px;padding:10px 10px 12px}
+.metric .k{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.metric .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+.metric .u{font-size:11px;color:var(--muted)}
+.err{color:var(--red);font-size:13px;min-height:1.2em;margin-top:10px}
+.diag{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.diag div{background:#0b1628;border-radius:9px;padding:9px}
+.good{color:var(--green)}.warn{color:var(--amber)}
+@media(max-width:560px){.diag{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div><h1>Sensate • Wit IMU</h1><div class="sub">Single WT901BLE over Web Bluetooth. Live roll/pitch/yaw, accel, gyro, and a 3D cube.</div></div><div class="row" style="margin-top:0"><a class="hub" href="index.html">Sensate</a><span id="rate" class="pill">0 Hz</span></div></div>
+<div class="card"><div class="row" style="margin-top:0"><button id="connect">Connect WT901BLE</button><button id="any" class="alt">Any BLE device</button><button id="disconnect" class="alt" disabled>Disconnect</button><span id="status" class="status">Not connected</span></div>
+<div class="small" style="margin-top:10px">Chrome or Edge on desktop / Android Chrome. iPhone Safari cannot do Web Bluetooth. Names filtered with prefix <code>WT</code>.</div></div>
+<div class="card"><div class="stage"><div class="cube" id="cube"><div class="face f">+Y</div><div class="face bk">-Y</div><div class="face r">+X</div><div class="face l">-X</div><div class="face t">+Z</div><div class="face b">-Z</div></div></div>
+<div class="grid">
+<div class="metric"><div class="k">Roll</div><div class="v" id="roll">—</div><div class="u">deg</div></div>
+<div class="metric"><div class="k">Pitch</div><div class="v" id="pitch">—</div><div class="u">deg</div></div>
+<div class="metric"><div class="k">Yaw</div><div class="v" id="yaw">—</div><div class="u">deg</div></div>
+<div class="metric"><div class="k">Accel X</div><div class="v" id="ax">—</div><div class="u">g</div></div>
+<div class="metric"><div class="k">Accel Y</div><div class="v" id="ay">—</div><div class="u">g</div></div>
+<div class="metric"><div class="k">Accel Z</div><div class="v" id="az">—</div><div class="u">g</div></div>
+<div class="metric"><div class="k">Gyro X</div><div class="v" id="gx">—</div><div class="u">°/s</div></div>
+<div class="metric"><div class="k">Gyro Y</div><div class="v" id="gy">—</div><div class="u">°/s</div></div>
+<div class="metric"><div class="k">Gyro Z</div><div class="v" id="gz">—</div><div class="u">°/s</div></div>
+</div>
+<div class="row"><button class="alt" id="btnMag" disabled>Read mag</button><button class="alt" id="btnQuat" disabled>Read quat</button><button class="alt" id="btnTemp" disabled>Read temp</button></div>
+<div class="grid">
+<div class="metric"><div class="k">Mag</div><div class="v" id="mag" style="font-size:13px">—</div><div class="u">raw</div></div>
+<div class="metric"><div class="k">Quat</div><div class="v" id="quat" style="font-size:13px">—</div><div class="u">q0..q3</div></div>
+<div class="metric"><div class="k">Temp</div><div class="v" id="temp">—</div><div class="u">°C</div></div>
+</div></div>
+<div class="card"><strong>BLE diagnostics</strong><div class="diag" style="margin-top:10px">
+<div>Web Bluetooth<br><b id="dWeb">—</b></div>
+<div>GATT<br><b id="dGatt">—</b></div>
+<div>FFE5 service<br><b id="dSvc">—</b></div>
+<div>FFE4 notify<br><b id="dNotify">—</b></div>
+<div>FFE9 write<br><b id="dWrite">—</b></div>
+<div>0x55 0x61 packets<br><b id="dPackets">0</b></div>
+</div></div>
+<p class="err" id="err"></p>
+<div class="note">Same BLE 5.0 UART as Gait and Gestures: service FFE5, notify FFE4, write FFE9. Live frames are 20 bytes starting <code>55 61</code>. Mag / quat / temp use register-read replies <code>55 71</code>.</div>
+</div>
+<script>
+(()=>{'use strict';
+const S='0000ffe5-0000-1000-8000-00805f9a34fb',N='0000ffe4-0000-1000-8000-00805f9a34fb',W='0000ffe9-0000-1000-8000-00805f9a34fb';
+const $=id=>document.getElementById(id);
+let dev,server,notify,writer,rx=[],packets=0,rateCount=0,rateAt=performance.now();
+function s16(lo,hi){let v=(hi<<8)|lo;return v&0x8000?v-65536:v}
+function fmt(n,d){return Number.isFinite(n)?n.toFixed(d):'—'}
+function status(s,c=''){let e=$('status');e.textContent=s;e.className='status '+c}
+function setErr(m){$('err').textContent=m||''}
+function setConnected(on){$('connect').disabled=on;$('any').disabled=on;$('disconnect').disabled=!on;$('btnMag').disabled=!on;$('btnQuat').disabled=!on;$('btnTemp').disabled=!on}
+function parseFrame(p){
+  if(p.length<20||p[0]!==0x55)return;
+  if(p[1]===0x61){
+    const ax=s16(p[2],p[3])/32768*16,ay=s16(p[4],p[5])/32768*16,az=s16(p[6],p[7])/32768*16;
+    const gx=s16(p[8],p[9])/32768*2000,gy=s16(p[10],p[11])/32768*2000,gz=s16(p[12],p[13])/32768*2000;
+    const roll=s16(p[14],p[15])/32768*180,pitch=s16(p[16],p[17])/32768*180,yaw=s16(p[18],p[19])/32768*180;
+    $('ax').textContent=fmt(ax,3);$('ay').textContent=fmt(ay,3);$('az').textContent=fmt(az,3);
+    $('gx').textContent=fmt(gx,1);$('gy').textContent=fmt(gy,1);$('gz').textContent=fmt(gz,1);
+    $('roll').textContent=fmt(roll,1);$('pitch').textContent=fmt(pitch,1);$('yaw').textContent=fmt(yaw,1);
+    $('cube').style.transform=`rotateX(${-pitch}deg) rotateZ(${roll}deg) rotateY(${yaw}deg)`;
+    packets++;rateCount++;$('dPackets').textContent=packets;
+  }else if(p[1]===0x71){
+    const reg=p[2];
+    if(reg===0x3a)$('mag').textContent=`${s16(p[4],p[5])}  ${s16(p[6],p[7])}  ${s16(p[8],p[9])}`;
+    else if(reg===0x51)$('quat').textContent=[4,6,8,10].map(o=>(s16(p[o],p[o+1])/32768).toFixed(3)).join('  ');
+    else if(reg===0x40)$('temp').textContent=fmt(s16(p[4],p[5])/100,2);
+  }
+}
+function incoming(bytes){
+  for(const b of bytes)rx.push(b);
+  while(rx.length>=20){
+    while(rx.length&&rx[0]!==0x55)rx.shift();
+    if(rx.length<20)return;
+    if(rx[1]===0x61||rx[1]===0x71){parseFrame(rx.splice(0,20))}
+    else rx.shift();
+  }
+  if(rx.length>256)rx=rx.slice(-64);
+}
+function onNotify(e){const v=e.target.value;incoming(new Uint8Array(v.buffer,v.byteOffset,v.byteLength))}
+async function connect(acceptAll){
+  setErr('');
+  if(!navigator.bluetooth){status('Web Bluetooth unavailable','bad');setErr('Use Chrome or Edge on desktop or Android. No native iOS BLE.');return}
+  try{
+    status('Choose sensor…');
+    const opts=acceptAll
+      ?{acceptAllDevices:true,optionalServices:[S]}
+      :{filters:[{namePrefix:'WT'}],optionalServices:[S]};
+    dev=await navigator.bluetooth.requestDevice(opts);
+    dev.addEventListener('gattserverdisconnected',disconnected);
+    status('Connecting…');
+    server=await dev.gatt.connect();
+    $('dGatt').textContent='Connected';$('dGatt').className='good';
+    const svc=await server.getPrimaryService(S);
+    $('dSvc').textContent='Found';$('dSvc').className='good';
+    notify=await svc.getCharacteristic(N);
+    await notify.startNotifications();
+    notify.addEventListener('characteristicvaluechanged',onNotify);
+    $('dNotify').textContent='Active';$('dNotify').className='good';
+    try{writer=await svc.getCharacteristic(W);$('dWrite').textContent='Found';$('dWrite').className='good'}
+    catch(e){writer=null;$('dWrite').textContent='Not found';$('dWrite').className='warn'}
+    setConnected(true);
+    status('Connected: '+(dev.name||'WT901BLE'),'ok');
+    try{localStorage.setItem('sensate-wit-last',dev.name||'')}catch(_){}
+  }catch(e){
+    if(e&&e.name==='NotFoundError')status('Not connected');
+    else{status('Connection failed','bad');setErr(e.message||String(e))}
+  }
+}
+function disconnected(){
+  setConnected(false);notify=writer=server=null;rx=[];
+  $('dGatt').textContent='Disconnected';$('dGatt').className='';
+  $('dNotify').textContent='Pending';$('dNotify').className='';
+  status('Disconnected');
+}
+function disconnect(){try{dev?.gatt?.disconnect()}catch(_){}disconnected()}
+async function sendCmd(bytes){if(!writer)return;try{await writer.writeValue(new Uint8Array(bytes))}catch(e){setErr(e.message||String(e))}}
+$('dWeb').textContent=navigator.bluetooth?'Available':'Unavailable';
+$('dWeb').className=navigator.bluetooth?'good':'bad';
+$('dGatt').textContent='Disconnected';
+$('dSvc').textContent=$('dNotify').textContent=$('dWrite').textContent='Pending';
+$('connect').onclick=()=>connect(false);
+$('any').onclick=()=>connect(true);
+$('disconnect').onclick=disconnect;
+$('btnMag').onclick=()=>sendCmd([0xFF,0xAA,0x27,0x3A,0x00]);
+$('btnQuat').onclick=()=>sendCmd([0xFF,0xAA,0x27,0x51,0x00]);
+$('btnTemp').onclick=()=>sendCmd([0xFF,0xAA,0x27,0x40,0x00]);
+setInterval(()=>{const now=performance.now(),dt=(now-rateAt)/1000;if(dt>=1){$('rate').textContent=(rateCount/dt).toFixed(0)+' Hz';rateCount=0;rateAt=now}},400);
+})();
+</script>
+</body>
+</html>
