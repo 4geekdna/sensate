@@ -1,12 +1,27 @@
 # Sensate
 
-Browser-based WITMOTION WT901BLE tools: gait analysis and hand-gesture recording. Static HTML, no build step, no backend.
+Browser-based WITMOTION WT901BLE tools: generic IMU viewers, gait analysis, and hand-gesture recording. Static HTML, no build step, no backend.
 
 ## Live apps
 
 - Hub: https://4geekdna.github.io/sensate/
 - Gait Analyzer: https://4geekdna.github.io/sensate/gait.html
 - Hand Gestures: https://4geekdna.github.io/sensate/gesture.html
+- Gesture Neural Net: https://4geekdna.github.io/sensate/gesture-nn.html
+- SensoryLab Phase 1: https://4geekdna.github.io/sensate/sensorylab/
+- Wit IMU: https://4geekdna.github.io/sensate/sensor-wit.html
+- Wit IMUs: https://4geekdna.github.io/sensate/sensor-wits.html
+- WT901BLE diagnostics: https://4geekdna.github.io/sensate/wt901ble.html
+
+## Wit IMU / Wit IMUs
+
+`sensor-wit.html` — single WT901BLE. Live roll/pitch/yaw, accel, gyro, and a 3D cube. Mag, quaternion, and temperature on request.
+
+`sensor-wits.html` — several WT901s at once. Each Add sensor opens another picker and a live cube.
+
+## WT901BLE diagnostics
+
+`wt901ble.html` — Chrome Web Bluetooth diagnostics: GATT profiles, packet rate, raw BLE log, and zero/reference orientation.
 
 ## Gait Analyzer
 

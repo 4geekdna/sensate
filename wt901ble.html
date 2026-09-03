@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sensate • WT901BLE</title>
+<style>
+:root{--bg:#08111f;--card:#101b2e;--card2:#17253d;--text:#eef5ff;--muted:#9eb0c9;--line:#2a3b5b;--blue:#79adff;--green:#5cda91;--red:#ff7373;--amber:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(#07101d,#0c1424);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:18px 18px 48px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+h1{margin:0;font-size:30px}.sub{color:var(--muted);margin-top:5px;line-height:1.5}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+button{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:700;background:var(--blue);color:#061120;cursor:pointer}
+button.alt{background:#273a5a;color:var(--text)}button.red{background:var(--red);color:white}button:disabled{opacity:.45}
+.status,.pill{border-radius:999px;padding:7px 10px;background:#233451;color:#c8d6ea;font-size:13px}
+.ok{color:var(--green)}.bad{color:var(--red)}
+.small{color:var(--muted);font-size:13px;line-height:1.5}
+a.hub{border-radius:999px;padding:7px 10px;background:#273a5a;color:var(--text);font-size:13px;text-decoration:none;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:16px}
+.card{background:rgba(16,27,46,.98);border:1px solid var(--line);border-radius:16px;padding:15px}
+.s12{grid-column:span 12}.s8{grid-column:span 8}.s6{grid-column:span 6}.s4{grid-column:span 4}
+@media(max-width:820px){.s8,.s6,.s4{grid-column:span 12}}
+.metric{display:flex;justify-content:space-between;border-top:1px solid #243651;padding:11px 0}
+.metric:first-of-type{border-top:0}
+.metric span:first-child{color:var(--muted)}
+.value{font-variant-numeric:tabular-nums;font-weight:800;font-size:21px}
+.mini{background:#0b1628;border-radius:9px;padding:13px}
+.mini b{display:block;font-size:17px;margin-top:4px;word-break:break-word}
+.mini span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:760px){.meta{grid-template-columns:1fr 1fr}}
+.diag{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.diag div{background:#0b1628;border-radius:9px;padding:9px}
+.good{color:var(--green)}.warn{color:var(--amber)}
+.log{height:260px;overflow:auto;background:#07101d;border-radius:10px;padding:10px;font:12px ui-monospace,Menlo,monospace;white-space:pre-wrap;color:#bdd0ea}
+.warning{display:none;margin-top:12px;padding:13px 15px;background:#2b1c12;border:1px solid #71421b;border-radius:14px;color:#ffd7a0}
+.sep{height:1px;background:#263956;margin:12px 0}
+h2{font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:#c4d0e8;margin:0 0 12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div><h1>Sensate • WT901BLE</h1><div class="sub">Chrome Web Bluetooth diagnostics: GATT profiles, packet rate, raw BLE log, and zero/reference orientation.</div></div><div class="row"><a class="hub" href="index.html">Sensate</a><div class="pill">Chrome/Edge desktop recommended</div></div></div>
+<div class="grid">
+<section class="card s12">
+<div class="row">
+<button id="connect">Connect WT901BLE</button>
+<button id="any" class="alt">Any BLE device</button>
+<button id="disconnect" class="red" disabled>Disconnect</button>
+<button id="zero" class="alt" disabled>Zero / Reference</button>
+<button id="clear" class="alt">Clear log</button>
+<span id="status" class="status">Not connected</span>
+<span id="rate" class="pill">0.0 Hz</span>
+</div>
+<div class="small" style="margin-top:10px">Primary filter is name prefix WT. Diagnostics also try WITMOTION FFE5, Bluetooth-base FFE5, and Microchip UART if the first profile is not exposed.</div>
+<div id="warning" class="warning"></div>
+</section>
+<section class="card s4"><h2>Acceleration</h2>
+<div class="metric"><span>X</span><span id="ax" class="value">0.000 g</span></div>
+<div class="metric"><span>Y</span><span id="ay" class="value">0.000 g</span></div>
+<div class="metric"><span>Z</span><span id="az" class="value">0.000 g</span></div>
+</section>
+<section class="card s4"><h2>Gyroscope</h2>
+<div class="metric"><span>X</span><span id="gx" class="value">0.00 °/s</span></div>
+<div class="metric"><span>Y</span><span id="gy" class="value">0.00 °/s</span></div>
+<div class="metric"><span>Z</span><span id="gz" class="value">0.00 °/s</span></div>
+</section>
+<section class="card s4"><h2>Orientation</h2>
+<div class="metric"><span>Roll</span><span id="roll" class="value">0.00°</span></div>
+<div class="metric"><span>Pitch</span><span id="pitch" class="value">0.00°</span></div>
+<div class="metric"><span>Yaw</span><span id="yaw" class="value">0.00°</span></div>
+</section>
+<section class="card s12"><div class="meta">
+<div class="mini"><span>Packets</span><b id="packetCount">0</b></div>
+<div class="mini"><span>Update rate</span><b id="rateBig">0.0 Hz</b></div>
+<div class="mini"><span>Profile</span><b id="profile">—</b></div>
+<div class="mini"><span>Last packet</span><b id="lastPacket">—</b></div>
+</div></section>
+<section class="card s4"><strong>BLE diagnostics</strong><div class="sep"></div>
+<div class="diag">
+<div>Web Bluetooth<br><b id="dWeb">—</b></div>
+<div>GATT<br><b id="dGatt">—</b></div>
+<div>Device<br><b id="dDev">—</b></div>
+<div>0x55 0x61 packets<br><b id="dPackets">0</b></div>
+</div></section>
+<section class="card s8"><strong>Connection / raw BLE log</strong><div id="log" class="log">Ready. Click Connect WT901BLE.</div></section>
+</div>
+</div>
+<script>
+(()=>{'use strict';
+const WIT_SERVICE='0000ffe5-0000-1000-8000-00805f9a34fb';
+const WIT_NOTIFY='0000ffe4-0000-1000-8000-00805f9a34fb';
+const WIT_WRITE='0000ffe9-0000-1000-8000-00805f9a34fb';
+const STD_SERVICE='0000ffe5-0000-1000-8000-00805f9b34fb';
+const STD_NOTIFY='0000ffe4-0000-1000-8000-00805f9b34fb';
+const STD_WRITE='0000ffe9-0000-1000-8000-00805f9b34fb';
+const UART_SERVICE='49535343-fe7d-4ae5-8fa9-9fafd205e455';
+const UART_TX='49535343-1e4d-4bd9-ba61-23c647249616';
+const UART_RX='49535343-8841-43f4-a8d4-ecbe34729bb3';
+const OPTIONAL=[WIT_SERVICE,STD_SERVICE,UART_SERVICE,'device_information'];
+const $=id=>document.getElementById(id);
+let device=null,server=null,notifyCharacteristic=null,writeCharacteristic=null;
+let packetCount=0,packetWindow=0,windowStart=performance.now();
+let zero={roll:0,pitch:0,yaw:0},latest={roll:0,pitch:0,yaw:0},rx=[];
+const logEl=$('log');
+function log(m){logEl.textContent+=`\n[${new Date().toLocaleTimeString()}] ${m}`;logEl.scrollTop=logEl.scrollHeight}
+function status(t,c=''){const e=$('status');e.textContent=t;e.className='status '+c}
+function warn(t){$('warning').textContent=t;$('warning').style.display='block'}
+function hex(v){return Array.from({length:v.byteLength},(_,i)=>v.getUint8(i).toString(16).padStart(2,'0').toUpperCase()).join(' ')}
+function i16(v,o){return v.getInt16(o,true)}
+function normalize180(d){while(d>180)d-=360;while(d<-180)d+=360;return d}
+async function connect(acceptAll){
+  if(!window.isSecureContext){warn('HTTPS is required. Use the GitHub Pages link.');return}
+  if(!navigator.bluetooth){warn('Web Bluetooth is not available. Use desktop Chrome/Edge or Android Chrome. No native iOS BLE.');return}
+  $('warning').style.display='none';
+  logEl.textContent='Starting connection…';
+  packetCount=0;$('packetCount').textContent='0';$('dPackets').textContent='0';$('profile').textContent='—';rx=[];
+  try{
+    status('Choose sensor…');
+    const opts=acceptAll
+      ?{acceptAllDevices:true,optionalServices:OPTIONAL}
+      :{filters:[{namePrefix:'WT'}],optionalServices:OPTIONAL};
+    device=await navigator.bluetooth.requestDevice(opts);
+    $('dDev').textContent=device.name||'Unnamed';
+    log(`Selected: ${device.name||'(unnamed)'} id=${device.id}`);
+    device.addEventListener('gattserverdisconnected',onDisconnected);
+    status('Connecting…');
+    server=await device.gatt.connect();
+    $('dGatt').textContent='Connected';$('dGatt').className='good';
+    log('GATT connected');
+    await detectProfile();
+  }catch(e){
+    if(e&&e.name==='NotFoundError'){status('Not connected');return}
+    status('Connection failed','bad');log(`ERROR ${e.name}: ${e.message}`);warn(`${e.name}: ${e.message}`);
+  }
+}
+async function tryProfile(label,serviceUUID,notifyUUID,writeUUID){
+  log(`Trying ${label}…`);
+  const s=await server.getPrimaryService(serviceUUID);
+  notifyCharacteristic=await s.getCharacteristic(notifyUUID);
+  try{writeCharacteristic=await s.getCharacteristic(writeUUID)}catch(e){writeCharacteristic=null;log(`${label}: write characteristic not found; receive-only mode`)}
+  $('profile').textContent=label;
+  await notifyCharacteristic.startNotifications();
+  notifyCharacteristic.addEventListener('characteristicvaluechanged',handleData);
+  $('connect').disabled=true;$('any').disabled=true;$('disconnect').disabled=false;$('zero').disabled=false;
+  status('Connected — waiting for data','ok');
+  log(`Notifications started on ${notifyUUID}`);
+  return true;
+}
+async function detectProfile(){
+  const profiles=[
+    ['WIT custom FFE5',WIT_SERVICE,WIT_NOTIFY,WIT_WRITE],
+    ['Standard-base FFE5',STD_SERVICE,STD_NOTIFY,STD_WRITE],
+    ['Microchip UART',UART_SERVICE,UART_TX,UART_RX]
+  ];
+  const errors=[];
+  for(const p of profiles){try{await tryProfile(...p);return}catch(e){errors.push(`${p[0]}: ${e.message}`);log(`${p[0]} unavailable: ${e.message}`)}
+  }
+  status('Connected, but no known data service found','bad');
+  warn('GATT connected, but no known WIT data profile was exposed. Send the log below.');
+  log(errors.join(' | '));
+}
+function disconnect(){if(device?.gatt?.connected)device.gatt.disconnect()}
+function onDisconnected(){
+  status('Disconnected','bad');
+  $('connect').disabled=false;$('any').disabled=false;$('disconnect').disabled=true;$('zero').disabled=true;
+  $('dGatt').textContent='Disconnected';$('dGatt').className='';
+  log('Device disconnected');
+}
+function parse20(bytes){
+  if(bytes.length<20||bytes[0]!==0x55||bytes[1]!==0x61)return false;
+  const v=new DataView(Uint8Array.from(bytes.slice(0,20)).buffer);
+  const ax=i16(v,2)/32768*16,ay=i16(v,4)/32768*16,az=i16(v,6)/32768*16;
+  const gx=i16(v,8)/32768*2000,gy=i16(v,10)/32768*2000,gz=i16(v,12)/32768*2000;
+  const roll=i16(v,14)/32768*180,pitch=i16(v,16)/32768*180,yaw=i16(v,18)/32768*180;
+  latest={roll,pitch,yaw};
+  $('ax').textContent=`${ax.toFixed(3)} g`;$('ay').textContent=`${ay.toFixed(3)} g`;$('az').textContent=`${az.toFixed(3)} g`;
+  $('gx').textContent=`${gx.toFixed(2)} °/s`;$('gy').textContent=`${gy.toFixed(2)} °/s`;$('gz').textContent=`${gz.toFixed(2)} °/s`;
+  $('roll').textContent=`${(roll-zero.roll).toFixed(2)}°`;
+  $('pitch').textContent=`${(pitch-zero.pitch).toFixed(2)}°`;
+  $('yaw').textContent=`${normalize180(yaw-zero.yaw).toFixed(2)}°`;
+  return true;
+}
+function handleData(ev){
+  const v=ev.target.value;
+  packetCount++;packetWindow++;
+  $('packetCount').textContent=packetCount;$('dPackets').textContent=packetCount;
+  $('lastPacket').textContent=new Date().toLocaleTimeString();
+  const now=performance.now();
+  if(now-windowStart>=1000){
+    const hz=(packetWindow*1000/(now-windowStart)).toFixed(1);
+    $('rate').textContent=`${hz} Hz`;$('rateBig').textContent=`${hz} Hz`;
+    packetWindow=0;windowStart=now;
+  }
+  if(packetCount<=8)log(`RX ${v.byteLength}B: ${hex(v)}`);
+  const incoming=Array.from({length:v.byteLength},(_,i)=>v.getUint8(i));
+  if(parse20(incoming)){status('Receiving sensor data','ok');return}
+  rx.push(...incoming);
+  while(rx.length>=20){
+    const idx=rx.findIndex((b,i)=>b===0x55&&rx[i+1]===0x61);
+    if(idx<0){rx=rx.slice(-1);break}
+    if(idx>0)rx.splice(0,idx);
+    if(rx.length<20)break;
+    if(parse20(rx.slice(0,20))){rx.splice(0,20);status('Receiving sensor data','ok')}
+    else rx.shift();
+  }
+}
+$('connect').onclick=()=>connect(false);
+$('any').onclick=()=>connect(true);
+$('disconnect').onclick=disconnect;
+$('zero').onclick=()=>{zero={...latest};log(`Reference set roll=${zero.roll.toFixed(2)} pitch=${zero.pitch.toFixed(2)} yaw=${zero.yaw.toFixed(2)}`)};
+$('clear').onclick=()=>{logEl.textContent='Log cleared.'};
+$('dWeb').textContent=navigator.bluetooth?'Available':'Unavailable';
+$('dWeb').className=navigator.bluetooth?'good':'bad';
+$('dGatt').textContent='Disconnected';
+$('dDev').textContent='—';
+if(!navigator.bluetooth){status('Web Bluetooth not detected','bad');warn('Use desktop Chrome/Chromium over HTTPS.')}
+})();
+</script>
+</body>
+</html>
